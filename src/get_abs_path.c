@@ -12,7 +12,7 @@
 
 #include "../include/pipex.h"
 
-char	*get_absolute_path(char *command, char *envp[])
+char	*get_abs_path(char *command, char *envp[])
 {
 	size_t	i;
 	size_t	path_len;
