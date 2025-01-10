@@ -29,9 +29,7 @@ int	main(int argc, char *argv[], char *envp[])
 	outfile_name = argv[argc - 1];
 
 	// splited_argsの配列を確保
-	cmd_list.cmd = NULL;
-	cmd_list.abs_path = NULL;
-	cmd_list.next = NULL;
+	init_cmd_list(&cmd_list);
 	split_cmds(argc, argv, envp, &cmd_list);
 
 	// 最初のコマンド実行

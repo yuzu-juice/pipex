@@ -1,4 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_list_handler.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/09 22:56:49 by takitaga          #+#    #+#             */
+/*   Updated: 2025/01/10 20:56:49 by takitaga         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/pipex.h"
+
+void	init_cmd_list(t_cmd *cmd_list)
+{
+	cmd_list->cmd = NULL;
+	cmd_list->abs_path = NULL;
+	cmd_list->next = NULL;
+}
 
 size_t	cmd_list_len(t_cmd *cmd_list)
 {

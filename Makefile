@@ -1,7 +1,7 @@
 NAME	= pipex
 SRCS	= src/pipex.c \
 		src/get_abs_path.c \
-		src/split_cmds.c
+		src/cmd_list_handler.c
 
 OBJS	= $(SRCS:.c=.o)
 HEADERS	= include/pipex.h
