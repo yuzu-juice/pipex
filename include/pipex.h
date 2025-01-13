@@ -13,11 +13,15 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
+# define IN		0
+# define OUT	1
+
+# include <stdio.h>
 # include <stdlib.h>
 # include <stdbool.h>
 # include <unistd.h>
 # include <sys/wait.h>
-#include <fcntl.h>
+# include <fcntl.h>
 # include "../../libft/libft.h"
 
 typedef struct s_cmd
@@ -27,12 +31,10 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-
-
 char	*get_abs_path(char *command, char *envp[]);
-void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmd_list);
-t_cmd	*get_last_cmd(t_cmd *cmd_list);
-size_t	cmd_list_len(t_cmd *cmd_list);
-void	init_cmd_list(t_cmd *cmd_list);
+void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list);
+t_cmd	*get_last_cmd(t_cmd *cmds_list);
+size_t	cmds_list_len(t_cmd *cmds_list);
+void	init_cmds_list(t_cmd *cmds_list);
 
 #endif

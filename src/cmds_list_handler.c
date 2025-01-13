@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_list_handler.c                                 :+:      :+:    :+:   */
+/*   cmds_list_handler.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,49 +12,49 @@
 
 #include "../include/pipex.h"
 
-void	init_cmd_list(t_cmd *cmd_list)
+void	init_cmds_list(t_cmd *cmds_list)
 {
-	cmd_list->cmd = NULL;
-	cmd_list->abs_path = NULL;
-	cmd_list->next = NULL;
+	cmds_list->cmd = NULL;
+	cmds_list->abs_path = NULL;
+	cmds_list->next = NULL;
 }
 
-size_t	cmd_list_len(t_cmd *cmd_list)
+size_t	cmds_list_len(t_cmd *cmds_list)
 {
 	size_t	count;
 
-	if (!cmd_list->cmd)
+	if (!cmds_list->cmd)
 		return (0);
 	count = 1;
-	while (cmd_list->next)
+	while (cmds_list->next)
 		count++;
 	return (count);
 }
 
-t_cmd *get_last_cmd(t_cmd *cmd_list)
+t_cmd *get_last_cmd(t_cmd *cmds_list)
 {
 	t_cmd	*last;
 
-	if (!cmd_list)
+	if (!cmds_list)
 		return (NULL);
-	last = cmd_list;
+	last = cmds_list;
 	while (last->next)
 		last = last->next;
 	return (last);
 }
 
-static void	append_cmd(char *str, t_cmd *cmd_list, char *envp[])
+static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 {
 	char	**splited;
 	t_cmd	*new_cmd;
 	t_cmd	*last;
 
 	splited = ft_split(str, ' ');
-	if (cmd_list->cmd == NULL)
+	if (cmds_list->cmd == NULL)
 	{
-		cmd_list->cmd = splited;
-		cmd_list->abs_path = get_abs_path(splited[0], envp);
-		// cmd_list->cmd[0] = cmd_list->abs_path;
+		cmds_list->cmd = splited;
+		cmds_list->abs_path = get_abs_path(splited[0], envp);
+		// cmds_list->cmd[0] = cmds_list->abs_path;
 		return ;
 	}
 	new_cmd = malloc(sizeof(t_cmd));
@@ -62,11 +62,11 @@ static void	append_cmd(char *str, t_cmd *cmd_list, char *envp[])
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
 	// new_cmd->cmd[0] = new_cmd->abs_path;
 	new_cmd->next = NULL;
-	last = get_last_cmd(cmd_list);
+	last = get_last_cmd(cmds_list);
 	last->next = new_cmd;
 }
 
-void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmd_list)
+void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
 {
 	size_t	i;
 	size_t	cmd_count;
@@ -75,7 +75,7 @@ void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmd_list)
 	cmd_count = argc - 3;
 	while (i < cmd_count)
 	{
-		append_cmd(argv[i + 2], cmd_list, envp);
+		append_cmd(argv[i + 2], cmds_list, envp);
 		i++;
 	}
 }

@@ -30,7 +30,6 @@ int	main(int argc, char *argv[], char *envp[])
 	int		fd[2][2];
 	_Bool	use_fd;
 	_Bool	is_first_cmd;
-	int		status;
 
 	infile_name = argv[1];
 	outfile_name = argv[argc - 1];
@@ -63,7 +62,6 @@ int	main(int argc, char *argv[], char *envp[])
 				close(infile_fd);
 				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
 				close(fd[!use_fd][OUT]);
-				write(2, "c", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("%s\n", "An erroSTDIN_FILENOr has occured in first cmd.");
 			}
@@ -77,7 +75,6 @@ int	main(int argc, char *argv[], char *envp[])
 				outfile_fd = open(outfile_name, O_WRONLY);
 				dup2(outfile_fd, STDOUT_FILENO);
 				close(outfile_fd);
-				write(2, "b", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("%s\n", "An error has occured in mid cmd.");
 			}
@@ -90,42 +87,69 @@ int	main(int argc, char *argv[], char *envp[])
 				close(fd[use_fd][IN]);
 				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
 				close(fd[!use_fd][OUT]);
-				write(2, "a", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("%s\n", "An error has occured in last cmd.");
 			}
 		}
-		//parent process
+		//parent processin
 		cmd = cmd->next;
 		use_fd = !use_fd;
 		is_first_cmd = false;
+		close_pipe(fd[use_fd]);
+		close_pipe(fd[!use_fd]);
 	}
-	close_pipe(fd[use_fd]);
-	close_pipe(fd[!use_fd]);
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-// wait(&status);
-// 	{
-// 		if (WIFEXITED(status)) {
-// 			ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
-// 					WEXITSTATUS(status));
-// 		}
-// 		if (WIFSIGNALED(status)) {
-// 			ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
-// 					WTERMSIG(status));
-// 		}
-// 	}
+
+	// // 最初のコマンド実行
+	// pid = fork();
+	// if (pid == 0)
+	// {
+	// 	close(fd1[0]);
+	// 	infile_fd = open(infile_name, O_RDONLY);
+	// 	dup2(infile_fd, STDIN_FILENO);
+	// 	close(infile_fd);
+	// 	dup2(fd1[1], STDOUT_FILENO);
+	// 	close(fd1[1]);
+	// 	execve(cmds_list.abs_path, cmds_list.cmd, envp);
+	// }
+
+	// // 途中のコマンド実行
+	// cmd = cmds_list.next;
+	// pipe(fd2);
+	// while (cmd->next)
+	// {
+	// 	pid = fork();
+	// 	if (pid == 0)
+	// 	{
+	// 		close(fd1[1]);
+	// 		dup2(fd1[0], STDIN_FILENO);
+	// 		close(fd1[0]);
+	// 		close(fd2[0]);
+	// 		dup2(fd2[1], STDOUT_FILENO);
+	// 		close(fd2[1]);
+	// 		execve(cmd->abs_path, cmd->cmd, envp);
+	// 	}
+	// 	cmd = cmd->next;
+	// }
+	// close(fd1[0]);
+	// close(fd1[1]);
+
+	// // 最後のコマンド実行
+	// pid = fork();
+	// if (pid == 0)
+	// {
+	// 	close(fd2[1]);
+	// 	dup2(fd2[0], STDIN_FILENO);
+	// 	close(fd2[0]);
+	// 	outfile_fd = open(outfile_name, O_WRONLY);
+	// 	dup2(outfile_fd, STDOUT_FILENO);
+	// 	close(outfile_fd);
+	// 	cmd = get_last_cmd(&cmds_list);
+	// 	execve(cmd->abs_path, cmd->cmd, envp);
+	// }
+
+	// close(fd2[0]);
+	// close(fd2[1]);
+	while (wait(NULL) > 0) ;
+
 	return (0);
 }
