@@ -30,7 +30,6 @@ int	main(int argc, char *argv[], char *envp[])
 	int		fd[2][2];
 	_Bool	use_fd;
 	_Bool	is_first_cmd;
-	int		status;
 
 	infile_name = argv[1];
 	outfile_name = argv[argc - 1];
@@ -63,9 +62,8 @@ int	main(int argc, char *argv[], char *envp[])
 				close(infile_fd);
 				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
 				close(fd[!use_fd][OUT]);
-				write(2, "c", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("%s\n", "An erroSTDIN_FILENOr has occured in first cmd.");
+					ft_printf("An error has occured in first cmd.\n");
 			}
 			// last command case
 			else if (cmd->next == NULL)
@@ -77,9 +75,8 @@ int	main(int argc, char *argv[], char *envp[])
 				outfile_fd = open(outfile_name, O_WRONLY);
 				dup2(outfile_fd, STDOUT_FILENO);
 				close(outfile_fd);
-				write(2, "b", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("%s\n", "An error has occured in mid cmd.");
+					ft_printf("An error has occured in mid cmd.\n");
 			}
 			// other case
 			else
@@ -90,9 +87,8 @@ int	main(int argc, char *argv[], char *envp[])
 				close(fd[use_fd][IN]);
 				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
 				close(fd[!use_fd][OUT]);
-				write(2, "a", 1);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("%s\n", "An error has occured in last cmd.");
+					ft_printf("An error has occured in last cmd.\n");
 			}
 		}
 		//parent process
@@ -102,20 +98,7 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	close_pipe(fd[use_fd]);
 	close_pipe(fd[!use_fd]);
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
-	wait(&status);
-	ft_printf("a\n");
+	while (wait(NULL) > 0) ;
 // wait(&status);
 // 	{
 // 		if (WIFEXITED(status)) {
