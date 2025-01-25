@@ -54,13 +54,11 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	{
 		cmds_list->cmd = splited;
 		cmds_list->abs_path = get_abs_path(splited[0], envp);
-		// cmds_list->cmd[0] = cmds_list->abs_path;
 		return ;
 	}
 	new_cmd = malloc(sizeof(t_cmd));
 	new_cmd->cmd = splited;
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
-	// new_cmd->cmd[0] = new_cmd->abs_path;
 	new_cmd->next = NULL;
 	last = get_last_cmd(cmds_list);
 	last->next = new_cmd;
