@@ -22,28 +22,29 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
 	t_cmd	*cmd;
-	char	*infile_name;
-	char	*outfile_name;
 	int		infile_fd;
 	int		outfile_fd;
 	pid_t	pid;
-	int		fd[2][2];
-	_Bool	use_fd;
+	int		fd[2];
 	_Bool	is_first_cmd;
+	int		status;
 
-	infile_name = argv[1];
-	outfile_name = argv[argc - 1];
+	status = 0;
+
+	if (argc < 5)
+	{
+		ft_printf("invalid args\n");
+		return (1);
+	}
 
 	// splited_argsの配列を確保
 	init_cmds_list(&cmds_list);
 	split_cmds(argc, argv, envp, &cmds_list);
 
 	is_first_cmd = true;
-	use_fd = true;
 	cmd = &cmds_list;
 
-	pipe(fd[use_fd]);
-	pipe(fd[!use_fd]);
+	pipe(fd);
 	while (cmd)
 	{
 		pid = fork();
@@ -52,63 +53,55 @@ int	main(int argc, char *argv[], char *envp[])
 		// child process
 		if (pid == 0)
 		{
-			// first command case
+			// if first cmd
 			if (is_first_cmd)
 			{
-				close_pipe(fd[use_fd]);
-				close(fd[!use_fd][IN]);
-				infile_fd = open(infile_name, O_RDONLY);
+				close(fd[IN]);
+				infile_fd = open(argv[1], O_RDONLY);
 				dup2(infile_fd, STDIN_FILENO);
 				close(infile_fd);
-				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
-				close(fd[!use_fd][OUT]);
+				dup2(fd[OUT], STDOUT_FILENO);
+				close(fd[OUT]);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("An error has occured in first cmd.\n");
 			}
-			// last command case
+			// if last cmd
 			else if (cmd->next == NULL)
 			{
-				close_pipe(fd[!use_fd]);
-				close(fd[use_fd][OUT]);
-				dup2(fd[use_fd][IN], STDIN_FILENO);
-				close(fd[use_fd][IN]);
-				outfile_fd = open(outfile_name, O_WRONLY);
+				close(fd[OUT]);
+				dup2(fd[IN], STDIN_FILENO);
+				close(fd[IN]);
+				outfile_fd = open(argv[argc - 1], O_WRONLY);
 				dup2(outfile_fd, STDOUT_FILENO);
 				close(outfile_fd);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("An error has occured in mid cmd.\n");
+					ft_printf("An error has occured in last cmd.\n");
+
 			}
-			// other case
+			// if mid cmd
 			else
 			{
-				close(fd[use_fd][OUT]);
-				close(fd[!use_fd][IN]);
-				dup2(fd[use_fd][IN], STDIN_FILENO);
-				close(fd[use_fd][IN]);
-				dup2(fd[!use_fd][OUT], STDOUT_FILENO);
-				close(fd[!use_fd][OUT]);
-				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("An error has occured in last cmd.\n");
+				ft_printf("called mid cmd\n");
+				close_pipe(fd);
+				return (0);
 			}
 		}
-		//parent process
+		// parent process
 		cmd = cmd->next;
-		use_fd = !use_fd;
 		is_first_cmd = false;
 	}
-	close_pipe(fd[use_fd]);
-	close_pipe(fd[!use_fd]);
-	while (wait(NULL) > 0) ;
-// wait(&status);
-// 	{
-// 		if (WIFEXITED(status)) {
-// 			ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
-// 					WEXITSTATUS(status));
-// 		}
-// 		if (WIFSIGNALED(status)) {
-// 			ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
-// 					WTERMSIG(status));
-// 		}
-// 	}
+	close_pipe(fd);
+	// while (wait(NULL) > 0) ;
+	wait(&status);
+		{
+			if (WIFEXITED(status)) {
+				ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
+						WEXITSTATUS(status));
+			}
+			if (WIFSIGNALED(status)) {
+				ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
+						WTERMSIG(status));
+			}
+		}
 	return (0);
 }
