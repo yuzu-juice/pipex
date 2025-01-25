@@ -41,6 +41,7 @@ usage
 
 ```
 ./pipex src/pipex.c "grep a" "wc -l" outfile
+./pipex src/pipex.c "grep a" "grep b" "wc -l" outfile
 valgrind --track-fds=yes ./pipex src/pipex.c "grep a" "wc -l" outfile
 valgrind --leak-check=full --show-leak-kinds=all ./pipex src/pipex.c "grep a" "wc -l" outfile
 ```

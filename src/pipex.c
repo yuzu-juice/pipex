@@ -81,9 +81,12 @@ int	main(int argc, char *argv[], char *envp[])
 			// if mid cmd
 			else
 			{
-				ft_printf("called mid cmd\n");
-				close_pipe(fd);
-				return (0);
+				dup2(fd[IN], STDIN_FILENO);
+				close(fd[IN]);
+				dup2(fd[OUT], STDOUT_FILENO);
+				close(fd[OUT]);
+				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
+					ft_printf("An error has occured in mid cmd.\n");
 			}
 		}
 		// parent process
@@ -91,17 +94,16 @@ int	main(int argc, char *argv[], char *envp[])
 		is_first_cmd = false;
 	}
 	close_pipe(fd);
-	// while (wait(NULL) > 0) ;
-	wait(&status);
-		{
-			if (WIFEXITED(status)) {
-				ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
-						WEXITSTATUS(status));
-			}
-			if (WIFSIGNALED(status)) {
-				ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
-						WTERMSIG(status));
-			}
+	while (wait(&status))
+	{
+		if (WIFEXITED(status)) {
+			ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
+					WEXITSTATUS(status));
 		}
+		if (WIFSIGNALED(status)) {
+			ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
+					WTERMSIG(status));
+		}
+	}
 	return (0);
 }
