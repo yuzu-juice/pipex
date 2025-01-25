@@ -1,9 +1,9 @@
 usage
 
 ```
-./pipex infile "ls -l" "wc -l" outfile
-./pipex infile "grep a1" "wc -w" outfile
-./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
+./pipex src/pipex.c "ls -l" "wc -l" outfile
+./pipex src/pipex.c "grep a" "wc -l" outfile
+./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2./pipex src/pipex.c "grep a" "wc -l" outfile
 ```
 
 2 cmds
@@ -38,3 +38,7 @@ usage
 3
     in fd0
     out outfile
+
+
+valgrind --track-fds=yes ./pipex src/pipex.c "grep a" "wc -l" outfile
+valgrind --leak-check=full --show-leak-kinds=all ./pipex src/pipex.c "grep a" "wc -l" outfile
