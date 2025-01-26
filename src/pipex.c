@@ -12,12 +12,6 @@
 
 #include "../include/pipex.h"
 
-void	close_pipe(int fd[2])
-{
-	close(fd[0]);
-	close(fd[1]);
-}
-
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
@@ -44,66 +38,59 @@ int	main(int argc, char *argv[], char *envp[])
 	is_first_cmd = true;
 	cmd = &cmds_list;
 
-	pipe(fd);
 	while (cmd)
 	{
+		pipe(fd);
 		pid = fork();
-
-		// @TODO: add case if fork has failed
-		// child process
-		if (pid == 0)
+		if (is_first_cmd)
 		{
-			// if first cmd
-			if (is_first_cmd)
+			// child
+			if (pid == 0)
 			{
-				close(fd[IN]);
+				close(fd[READ]);
 				infile_fd = open(argv[1], O_RDONLY);
 				dup2(infile_fd, STDIN_FILENO);
 				close(infile_fd);
-				dup2(fd[OUT], STDOUT_FILENO);
-				close(fd[OUT]);
+				dup2(fd[WRITE], STDOUT_FILENO);
+				close(fd[WRITE]);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("An error has occured in first cmd.\n");
 			}
-			// if last cmd
-			else if (cmd->next == NULL)
-			{
-				close(fd[OUT]);
-				dup2(fd[IN], STDIN_FILENO);
-				close(fd[IN]);
-				outfile_fd = open(argv[argc - 1], O_WRONLY);
-				dup2(outfile_fd, STDOUT_FILENO);
-				close(outfile_fd);
-				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("An error has occured in last cmd.\n");
-
-			}
-			// if mid cmd
+			// parent
 			else
 			{
-				dup2(fd[IN], STDIN_FILENO);
-				close(fd[IN]);
-				dup2(fd[OUT], STDOUT_FILENO);
-				close(fd[OUT]);
+				close(fd[WRITE]);
+				close(STDIN_FILENO);
+				dup2(fd[READ], STDIN_FILENO);
+				close(fd[READ]);
+				waitpid(pid, NULL, 0);
+			}
+		}
+		else if (cmd->next == NULL)
+		{
+			outfile_fd = open(argv[argc - 1], O_WRONLY);
+			dup2(outfile_fd, STDOUT_FILENO);
+			close(outfile_fd);
+			if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
+				ft_printf("An error has occured in last cmd.\n");
+		}
+		else
+		{
+			if (pid == 0)
+			{
+				dup2(fd[WRITE], STDOUT_FILENO);
 				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 					ft_printf("An error has occured in mid cmd.\n");
+			}
+			else
+			{
+				waitpid(pid, NULL, 0);
+				dup2(fd[READ], STDIN_FILENO);
 			}
 		}
 		// parent process
 		cmd = cmd->next;
 		is_first_cmd = false;
-	}
-	close_pipe(fd);
-	while (wait(&status))
-	{
-		if (WIFEXITED(status)) {
-			ft_printf("親プロセス : 子プロセスは終了ステータス%dで正常終了しました\n",
-					WEXITSTATUS(status));
-		}
-		if (WIFSIGNALED(status)) {
-			ft_printf("親プロセス : 子プロセスはシグナル番号%dで終了しました\n",
-					WTERMSIG(status));
-		}
 	}
 	return (0);
 }

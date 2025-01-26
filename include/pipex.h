@@ -13,8 +13,8 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# define IN		0
-# define OUT	1
+# define READ	0
+# define WRITE	1
 
 # include <stdio.h>
 # include <stdlib.h>
