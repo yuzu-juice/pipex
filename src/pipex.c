@@ -12,6 +12,12 @@
 
 #include "../include/pipex.h"
 
+void	close_pipe(int pipe_fd[2])
+{
+	close(pipe_fd[READ]);
+	close(pipe_fd[WRITE]);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
@@ -61,11 +67,6 @@ int	main(int argc, char *argv[], char *envp[])
 				infile_fd = prev_pipe_fd[READ];
 				outfile_fd = current_pipe_fd[WRITE];
 			}
-			// ft_printf("child process\n");
-			// ft_printf("cmd: %s\n", cmd->cmd[0]);
-			// ft_printf("infile_fd: %d\n", infile_fd);
-			// ft_printf("outfile_fd: %d\n", outfile_fd);
-			// ft_printf("\n");
 			dup2(infile_fd, STDIN_FILENO);
 			close(infile_fd);
 			dup2(outfile_fd, STDOUT_FILENO);
@@ -77,26 +78,14 @@ int	main(int argc, char *argv[], char *envp[])
 		else
 		{
 			if (!is_first_cmd)
-			{
-				close(prev_pipe_fd[READ]);
-				close(prev_pipe_fd[WRITE]);
-			}
+				close_pipe(prev_pipe_fd);
 			if (cmd->next == NULL)
-			{
-				close(current_pipe_fd[READ]);
-				close(current_pipe_fd[WRITE]);
-			}
+				close_pipe(current_pipe_fd);
 			else
 			{
 				prev_pipe_fd[READ] = current_pipe_fd[READ];
 				prev_pipe_fd[WRITE] = current_pipe_fd[WRITE];
 			}
-			// ft_printf("parent process\n");
-			// ft_printf("pid: %d\n", pid);
-			// ft_printf("cmd: %s\n", cmd->cmd[0]);
-			// ft_printf("infile_fd: %d\n", current_pipe_fd[READ]);
-			// ft_printf("outfile_fd: %d\n", current_pipe_fd[WRITE]);
-			// ft_printf("\n");
 			waitpid(pid, NULL, 0);
 			cmd = cmd->next;
 			is_first_cmd = false;
