@@ -19,11 +19,9 @@ int	main(int argc, char *argv[], char *envp[])
 	int		infile_fd;
 	int		outfile_fd;
 	pid_t	pid;
-	int		fd[2];
+	int		prev_pipe_fd[2];
+	int		current_pipe_fd[2];
 	_Bool	is_first_cmd;
-	int		status;
-
-	status = 0;
 
 	if (!validate_input(argc, argv))
 		return (1);
@@ -37,57 +35,72 @@ int	main(int argc, char *argv[], char *envp[])
 
 	while (cmd)
 	{
-		pipe(fd);
+		if (cmd->next != NULL)
+			pipe(current_pipe_fd);
 		pid = fork();
-		if (is_first_cmd)
+
+		// child process
+		if (pid == 0)
 		{
-			// child
-			if (pid == 0)
+			if (is_first_cmd)
 			{
-				close(fd[READ]);
+				close(current_pipe_fd[READ]);
 				infile_fd = open(argv[1], O_RDONLY);
-				dup2(infile_fd, STDIN_FILENO);
-				close(infile_fd);
-				dup2(fd[WRITE], STDOUT_FILENO);
-				close(fd[WRITE]);
-				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("An error has occured in first cmd.\n");
+				outfile_fd = current_pipe_fd[WRITE];
 			}
-			// parent
+			else if (cmd->next == NULL)
+			{
+				close(prev_pipe_fd[WRITE]);
+				infile_fd = prev_pipe_fd[READ];
+				outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			}
 			else
 			{
-				close(fd[WRITE]);
-				close(STDIN_FILENO);
-				dup2(fd[READ], STDIN_FILENO);
-				close(fd[READ]);
-				waitpid(pid, NULL, 0);
+				close(prev_pipe_fd[WRITE]);
+				close(current_pipe_fd[READ]);
+				infile_fd = prev_pipe_fd[READ];
+				outfile_fd = current_pipe_fd[WRITE];
 			}
-		}
-		else if (cmd->next == NULL)
-		{
-			outfile_fd = open(argv[argc - 1], O_WRONLY);
+			// ft_printf("child process\n");
+			// ft_printf("cmd: %s\n", cmd->cmd[0]);
+			// ft_printf("infile_fd: %d\n", infile_fd);
+			// ft_printf("outfile_fd: %d\n", outfile_fd);
+			// ft_printf("\n");
+			dup2(infile_fd, STDIN_FILENO);
+			close(infile_fd);
 			dup2(outfile_fd, STDOUT_FILENO);
 			close(outfile_fd);
 			if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-				ft_printf("An error has occured in last cmd.\n");
+				ft_printf("An error has occured.\n");
 		}
+		// parent process
 		else
 		{
-			if (pid == 0)
+			if (!is_first_cmd)
 			{
-				dup2(fd[WRITE], STDOUT_FILENO);
-				if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-					ft_printf("An error has occured in mid cmd.\n");
+				close(prev_pipe_fd[READ]);
+				close(prev_pipe_fd[WRITE]);
+			}
+			if (cmd->next == NULL)
+			{
+				close(current_pipe_fd[READ]);
+				close(current_pipe_fd[WRITE]);
 			}
 			else
 			{
-				waitpid(pid, NULL, 0);
-				dup2(fd[READ], STDIN_FILENO);
+				prev_pipe_fd[READ] = current_pipe_fd[READ];
+				prev_pipe_fd[WRITE] = current_pipe_fd[WRITE];
 			}
+			// ft_printf("parent process\n");
+			// ft_printf("pid: %d\n", pid);
+			// ft_printf("cmd: %s\n", cmd->cmd[0]);
+			// ft_printf("infile_fd: %d\n", current_pipe_fd[READ]);
+			// ft_printf("outfile_fd: %d\n", current_pipe_fd[WRITE]);
+			// ft_printf("\n");
+			waitpid(pid, NULL, 0);
+			cmd = cmd->next;
+			is_first_cmd = false;
 		}
-		// parent process
-		cmd = cmd->next;
-		is_first_cmd = false;
 	}
 	return (0);
 }
