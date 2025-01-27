@@ -18,77 +18,71 @@ void	close_pipe(int pipe_fd[2])
 	close(pipe_fd[WRITE]);
 }
 
+void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, char *argv[], char *envp[])
+{
+	int	infile_fd;
+	int	outfile_fd;
+
+	if (is_first_cmd)
+	{
+		close(pipe_fd[CURR][READ]);
+		infile_fd = open(argv[1], O_RDONLY);
+		outfile_fd = pipe_fd[CURR][WRITE];
+	}
+	else if (cmd->next == NULL)
+	{
+		close(pipe_fd[PREV][WRITE]);
+		infile_fd = pipe_fd[PREV][READ];
+		outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	}
+	else
+	{
+		close(pipe_fd[PREV][WRITE]);
+		close(pipe_fd[CURR][READ]);
+		infile_fd = pipe_fd[PREV][READ];
+		outfile_fd = pipe_fd[CURR][WRITE];
+	}
+	dup2(infile_fd, STDIN_FILENO);
+	close(infile_fd);
+	dup2(outfile_fd, STDOUT_FILENO);
+	close(outfile_fd);
+	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
+		ft_printf("An error has occured.\n");
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
 	t_cmd	*cmd;
-	int		infile_fd;
-	int		outfile_fd;
 	pid_t	pid;
-	int		prev_pipe_fd[2];
-	int		current_pipe_fd[2];
+	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
 
 	if (!validate_input(argc, argv))
 		return (1);
-
-	// splited_argsの配列を確保
-	init_cmds_list(&cmds_list);
-	split_cmds(argc, argv, envp, &cmds_list);
-
-	is_first_cmd = true;
+	init_cmds_list(&cmds_list, argc, argv, envp);
 	cmd = &cmds_list;
+	is_first_cmd = true;
 
 	while (cmd)
 	{
 		if (cmd->next != NULL)
-			pipe(current_pipe_fd);
+			pipe(pipe_fd[CURR]);
 		pid = fork();
 
-		// child process
 		if (pid == 0)
-		{
-			if (is_first_cmd)
-			{
-				close(current_pipe_fd[READ]);
-				infile_fd = open(argv[1], O_RDONLY);
-				outfile_fd = current_pipe_fd[WRITE];
-			}
-			else if (cmd->next == NULL)
-			{
-				close(prev_pipe_fd[WRITE]);
-				infile_fd = prev_pipe_fd[READ];
-				outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			}
-			else
-			{
-				close(prev_pipe_fd[WRITE]);
-				close(current_pipe_fd[READ]);
-				infile_fd = prev_pipe_fd[READ];
-				outfile_fd = current_pipe_fd[WRITE];
-			}
-			dup2(infile_fd, STDIN_FILENO);
-			close(infile_fd);
-			dup2(outfile_fd, STDOUT_FILENO);
-			close(outfile_fd);
-			if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-				ft_printf("An error has occured.\n");
-		}
-		// parent process
+			child_process(is_first_cmd, pipe_fd, cmd, argc, argv, envp);
+		if (!is_first_cmd)
+			close_pipe(pipe_fd[PREV]);
+		if (cmd->next == NULL)
+			close_pipe(pipe_fd[CURR]);
 		else
 		{
-			if (!is_first_cmd)
-				close_pipe(prev_pipe_fd);
-			if (cmd->next == NULL)
-				close_pipe(current_pipe_fd);
-			else
-			{
-				prev_pipe_fd[READ] = current_pipe_fd[READ];
-				prev_pipe_fd[WRITE] = current_pipe_fd[WRITE];
-			}
-			cmd = cmd->next;
-			is_first_cmd = false;
+			pipe_fd[PREV][READ] = pipe_fd[CURR][READ];
+			pipe_fd[PREV][WRITE] = pipe_fd[CURR][WRITE];
 		}
+		cmd = cmd->next;
+		is_first_cmd = false;
 	}
 	while (wait(NULL) > 0) ;
 	return (0);

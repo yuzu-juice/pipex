@@ -15,6 +15,8 @@
 
 # define READ	0
 # define WRITE	1
+# define PREV	0
+# define CURR	1
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -33,9 +35,8 @@ typedef struct s_cmd
 
 _Bool	validate_input(int argc, char *argv[]);
 char	*get_abs_path(char *command, char *envp[]);
-void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list);
 t_cmd	*get_last_cmd(t_cmd *cmds_list);
 size_t	cmds_list_len(t_cmd *cmds_list);
-void	init_cmds_list(t_cmd *cmds_list);
+void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
 
 #endif

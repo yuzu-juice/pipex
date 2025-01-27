@@ -12,13 +12,6 @@
 
 #include "../include/pipex.h"
 
-void	init_cmds_list(t_cmd *cmds_list)
-{
-	cmds_list->cmd = NULL;
-	cmds_list->abs_path = NULL;
-	cmds_list->next = NULL;
-}
-
 size_t	cmds_list_len(t_cmd *cmds_list)
 {
 	size_t	count;
@@ -64,7 +57,7 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	last->next = new_cmd;
 }
 
-void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
+static void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
 {
 	size_t	i;
 	size_t	cmd_count;
@@ -76,4 +69,13 @@ void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
 		append_cmd(argv[i + 2], cmds_list, envp);
 		i++;
 	}
+}
+
+
+void	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
+{
+	cmds_list->cmd = NULL;
+	cmds_list->abs_path = NULL;
+	cmds_list->next = NULL;
+	split_cmds(argc, argv, envp, cmds_list);
 }
