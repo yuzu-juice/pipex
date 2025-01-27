@@ -86,10 +86,10 @@ int	main(int argc, char *argv[], char *envp[])
 				prev_pipe_fd[READ] = current_pipe_fd[READ];
 				prev_pipe_fd[WRITE] = current_pipe_fd[WRITE];
 			}
-			waitpid(pid, NULL, 0);
 			cmd = cmd->next;
 			is_first_cmd = false;
 		}
 	}
+	while (wait(NULL) > 0) ;
 	return (0);
 }
