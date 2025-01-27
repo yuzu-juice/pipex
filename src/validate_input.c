@@ -12,8 +12,10 @@
 
 #include "pipex.h"
 
-_Bool	validate_input(char *argv[])
+_Bool	validate_input(int argc, char *argv[])
 {
+	if (argc < 5)
+		return (false);
 	(void)argv;
 	return (true);
 }
