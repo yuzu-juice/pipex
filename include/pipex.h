@@ -31,6 +31,7 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
+_Bool	validate_input(int argc, char *argv[]);
 char	*get_abs_path(char *command, char *envp[]);
 void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list);
 t_cmd	*get_last_cmd(t_cmd *cmds_list);
