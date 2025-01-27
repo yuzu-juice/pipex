@@ -25,11 +25,8 @@ int	main(int argc, char *argv[], char *envp[])
 
 	status = 0;
 
-	if (argc < 5)
-	{
-		ft_printf("invalid args\n");
+	if (!validate_input(argc, argv))
 		return (1);
-	}
 
 	// splited_argsの配列を確保
 	init_cmds_list(&cmds_list);
