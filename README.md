@@ -4,6 +4,7 @@ usage
 ./pipex src/pipex.c "ls -l" "wc -l" outfile
 ./pipex src/pipex.c "grep a" "wc -l" outfile
 ./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2./pipex src/pipex.c "grep a" "wc -l" outfile
+./pipex here_doc EOF "grep a" "wc -l" outfile
 ```
 
 ```
