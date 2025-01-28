@@ -50,6 +50,19 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 		ft_printf("An error has occured.\n");
 }
 
+void	here_doc(char *limiter)
+{
+	char	*buf;
+
+	while (true)
+	{
+		buf = get_next_line(STDIN_FILENO);
+		if (ft_strncmp(buf, limiter, ft_strlen(limiter)))
+			break ;
+	}
+	ft_printf("%s\n", buf);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
@@ -63,6 +76,12 @@ int	main(int argc, char *argv[], char *envp[])
 	init_cmds_list(&cmds_list, argc, argv, envp);
 	cmd = &cmds_list;
 	is_first_cmd = true;
+
+	if (ft_strncmp(argv[1], "here_doc", 8))
+	{
+		here_doc(argv[2]);
+		cmd = cmd->next->next;
+	}
 
 	while (cmd)
 	{
