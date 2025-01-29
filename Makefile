@@ -2,6 +2,7 @@ NAME	= pipex
 SRCS	= src/pipex.c \
 		src/get_abs_path.c \
 		src/cmds_list_handler.c \
+		src/here_doc.c \
 		src/validate_input.c \
 		src/get_next_line/get_next_line.c \
 		src/get_next_line/get_next_line_utils.c

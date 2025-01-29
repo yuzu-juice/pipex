@@ -50,33 +50,6 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 		ft_printf("An error has occured.\n");
 }
 
-void	here_doc(char *limiter)
-{
-	char	*line;
-	int 	tmp_fd;
-
-	tmp_fd = open(".heredoc_tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (tmp_fd < 0)
-	{
-		ft_printf("An error has occured.\n");
-		exit(1);
-	}
-	while (true)
-	{
-		ft_printf("heredoc> ");
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-			break ;
-		if (!ft_strncmp(line, limiter, ft_strlen(limiter)) && line[ft_strlen(limiter)] == '\n')
-		{
-			free(line);
-			break ;
-		}
-		write(tmp_fd, line, ft_strlen(line));
-	}
-	close(tmp_fd);
-}
-
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
@@ -87,6 +60,7 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (!validate_input(argc, argv))
 		return (1);
+
 	init_cmds_list(&cmds_list, argc, argv, envp);
 	cmd = &cmds_list;
 	is_first_cmd = true;
@@ -94,7 +68,7 @@ int	main(int argc, char *argv[], char *envp[])
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		here_doc(argv[2]);
-		argv[1] = ".heredoc_tmp";
+		argv[1] = HERE_DOC_FILE;
 		cmd = cmd->next;
 	}
 
@@ -119,7 +93,7 @@ int	main(int argc, char *argv[], char *envp[])
 		is_first_cmd = false;
 	}
 	while (wait(NULL) > 0) ;
-	if (ft_strncmp(argv[1], ".heredoc_tmp", 12) == 0)
+	if (ft_strncmp(argv[1], HERE_DOC_FILE, 12) == 0)
 		unlink(".heredoc_tmp");
 	return (0);
 }

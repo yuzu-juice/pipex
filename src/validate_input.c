@@ -16,6 +16,15 @@ _Bool	validate_input(int argc, char *argv[])
 {
 	if (argc < 5)
 		return (false);
-	(void)argv;
+	if (ft_strncmp(argv[1], "here_doc", 8) != 0)
+	{
+		if (access(argv[1], R_OK) == -1)
+			perror(argv[1]);
+	}
+	if (access(argv[argc - 1], W_OK) == -1)
+	{
+		perror(argv[argc - 1]);
+		return (false);
+	}
 	return (true);
 }

@@ -1,6 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
+/*   cmds_list_handler.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/26 23:59:26 by takitaga          #+#    #+#             */
+/*   Updated: 2025/01/28 00:23:42 by takitaga         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
 /*   cmds_list_handler.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
@@ -12,19 +24,7 @@
 
 #include "../include/pipex.h"
 
-size_t	cmds_list_len(t_cmd *cmds_list)
-{
-	size_t	count;
-
-	if (!cmds_list->cmd)
-		return (0);
-	count = 1;
-	while (cmds_list->next)
-		count++;
-	return (count);
-}
-
-t_cmd *get_last_cmd(t_cmd *cmds_list)
+static t_cmd *get_last_cmd(t_cmd *cmds_list)
 {
 	t_cmd	*last;
 
@@ -71,11 +71,26 @@ static void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
 	}
 }
 
-
 void	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
 {
 	cmds_list->cmd = NULL;
 	cmds_list->abs_path = NULL;
 	cmds_list->next = NULL;
 	split_cmds(argc, argv, envp, cmds_list);
+}
+
+void	free_cmds_list(t_cmd *cmds_list)
+{
+	t_cmd	*tmp;
+	t_cmd	*cmd;
+
+	cmd = cmds_list;
+	while (cmds_list)
+	{
+		tmp = cmds_list;
+		cmd = cmd->next;
+		free(tmp->cmd);
+		free(tmp->abs_path);
+		free(tmp);
+	}
 }
