@@ -21,6 +21,8 @@ char	*get_abs_path(char *command, char *envp[])
 
 	if (!command || !envp)
 		return (NULL);
+	if (access(command, X_OK) == 0)
+		return (ft_strdup(command));
 	i = 0;
 	while (envp[i])
 	{
