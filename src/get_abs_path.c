@@ -45,5 +45,6 @@ char	*get_abs_path(char *command, char *envp[])
 			return (absolute_path);
 		i++;
 	}
+	perror(command);
 	return (NULL);
 }
