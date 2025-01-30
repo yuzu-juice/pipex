@@ -3,71 +3,128 @@
 ## 基本テスト
 
 -   基本的なパイプ処理: `cat` と `wc -l`
+
     ```bash
-    # pipex
-    ./pipex infile "cat" "wc -l" outfile
-    # bash
-    < infile cat | wc -l > outfile
+    # テストファイル作成
+    echo -e "Hello\nWorld\nTest" > infile
+
+    # テスト実行
+    ./pipex infile "cat" "wc -l" outfile1
+    < infile cat | wc -l > outfile2
+
+    # 結果比較
+    diff outfile1 outfile2
     ```
+
 -   複数コマンド: `cat | grep test | wc -l`
 
     ```bash
-    # pipex
-    ./pipex infile "cat" "grep test" "wc -l" outfile
-    # bash
-    < infile cat | grep test | wc -l > outfile
+    # テストファイル作成
+    echo -e "test1\nno match\ntest2\ntest3" > infile
+
+    # テスト実行
+    ./pipex infile "cat" "grep test" "wc -l" outfile1
+    < infile cat | grep test | wc -l > outfile2
+
+    # 結果比較
+    diff outfile1 outfile2
     ```
 
 -   でっけぇファイル
 
     ```bash
-    # 大きなファイルの生成
+    # テストファイル作成
     dd if=/dev/urandom of=bigfile bs=1M count=100
 
-    # pipex
-    ./pipex bigfile "cat" "wc -l" outfile
-    # bash
-    < bigfile cat | wc -l > outfile
+    # 基本テスト
+    ./pipex bigfile "cat" "wc -l" outfile1
+    < bigfile cat | wc -l > outfile2
+    diff outfile1 outfile2
 
-    # 圧縮処理のテスト
-    ./pipex bigfile "cat" "gzip" outfile.gz
-    # bash
-    < bigfile cat | gzip > outfile.gz
+    # 圧縮テスト
+    ./pipex bigfile "cat" "gzip" outfile1.gz
+    < bigfile cat | gzip > outfile2.gz
+    cmp outfile1.gz outfile2.gz
 
-    # バイナリデータを含む大きなファイルの処理
-    ./pipex bigfile "xxd" "head -n 1000" outfile
-    # bash
-    < bigfile xxd | head -n 1000 > outfile
+    # バイナリ処理テスト
+    ./pipex bigfile "xxd" "head -n 1000" outfile1
+    < bigfile xxd | head -n 1000 > outfile2
+    diff outfile1 outfile2
     ```
 
 ## エラー処理テスト
 
 -   存在しないファイル
+
     ```bash
-    # pipex
-    ./pipex nonexistent "ls" "wc -l" outfile
-    # bash
-    < nonexistent ls | wc -l > outfile
+    # 終了コードの確認
+    ./pipex nonexistent "ls" "wc -l" outfile1
+    echo $? > status1
+    < nonexistent ls | wc -l > outfile2 2>/dev/null
+    echo $? > status2
+    diff status1 status2
     ```
+
 -   空のコマンド
+
     ```bash
-    # pipex
-    ./pipex infile "" "wc -l" outfile
-    # bash
-    < infile "" | wc -l > outfile
+    # テストファイル作成
+    echo "test" > infile
+
+    # 終了コードとエラーメッセージの確認
+    ./pipex infile "" "wc -l" outfile1 2>error1
+    echo $? > status1
+    < infile "" | wc -l > outfile2 2>error2
+    echo $? > status2
+    diff status1 status2
     ```
+
 -   無効なコマンド
     ```bash
-    # pipex
-    ./pipex infile "invalidcmd" "wc -l" outfile
-    # bash
-    < infile invalidcmd | wc -l > outfile
+    ./pipex infile "invalidcmd" "wc -l" outfile1 2>error1
+    echo $? > status1
+    < infile invalidcmd | wc -l > outfile2 2>error2
+    echo $? > status2
+    diff status1 status2
     ```
 
 ## 権限テスト
 
 -   入力ファイルの読み取り権限なし
+
+    ```bash
+    # テストファイル作成と権限変更
+    echo "test" > noperm_input
+    chmod 000 noperm_input
+
+    # テスト実行
+    ./pipex noperm_input "cat" "wc -l" outfile1 2>error1
+    echo $? > status1
+    < noperm_input cat | wc -l > outfile2 2>error2
+    echo $? > status2
+    diff status1 status2
+
+    # クリーンアップ
+    chmod 666 noperm_input
+    ```
+
 -   出力ファイルの書き込み権限なし
+
+    ```bash
+    # テストファイル作成と権限変更
+    touch noperm_output
+    chmod 444 noperm_output
+
+    # テスト実行
+    ./pipex infile "cat" "wc -l" noperm_output 2>error1
+    echo $? > status1
+    < infile cat | wc -l > noperm_output 2>error2
+    echo $? > status2
+    diff status1 status2
+
+    # クリーンアップ
+    chmod 666 noperm_output
+    ```
 
 ## 発展テスト
 
@@ -82,28 +139,49 @@
 ## here_doc テスト
 
 -   基本的な here_doc 処理: `grep a | wc -l`
+
     ```bash
-    # pipex
-    ./pipex here_doc EOF "grep a" "wc -l" outfile
-    # bash
-    cat << EOF | grep a | wc -l > outfile
+    # pipexの実行
+    ./pipex here_doc EOF "grep a" "wc -l" outfile1 << EOF
     Hello World
     This is a test
     abc
     def
     EOF
+
+    # bashの実行
+    cat << EOF | grep a | wc -l > outfile2
+    Hello World
+    This is a test
+    abc
+    def
+    EOF
+
+    # 結果比較
+    diff outfile1 outfile2
     ```
+
 -   複数行の here_doc: `grep test | sed`
+
     ```bash
-    # pipex
-    ./pipex here_doc LIMIT "grep test" "sed s/test/TEST/" outfile
-    # bash
-    cat << LIMIT | grep test | sed s/test/TEST/ > outfile
+    # pipexの実行
+    ./pipex here_doc LIMIT "grep test" "sed s/test/TEST/" outfile1 << LIMIT
     test1
     test2
     no match
     test3
     LIMIT
+
+    # bashの実行
+    cat << LIMIT | grep test | sed s/test/TEST/ > outfile2
+    test1
+    test2
+    no match
+    test3
+    LIMIT
+
+    # 結果比較
+    diff outfile1 outfile2
     ```
 
 ## Valgrind テスト
@@ -138,6 +216,42 @@
 
 ```bash
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes ./pipex infile "cat" "wc -l" outfile
+```
+
+## 包括的なテストスクリプト
+
+```bash
+#!/bin/bash
+
+# テスト結果を保存するディレクトリ
+mkdir -p test_results
+
+# すべてのテストを実行
+run_test() {
+    echo "Running test: $1"
+    eval "$2"
+    if [ $? -eq 0 ]; then
+        echo "✅ Test passed: $1"
+    else
+        echo "❌ Test failed: $1"
+    fi
+    echo "-------------------"
+}
+
+# 基本テスト
+run_test "Basic pipe" "diff <(./pipex infile 'cat' 'wc -l' outfile1) <(< infile cat | wc -l)"
+
+# エラー処理テスト
+run_test "Nonexistent file" "diff <(./pipex nonexistent 'ls' 'wc -l' outfile1 2>&1) <(< nonexistent ls | wc -l 2>&1)"
+
+# 権限テスト
+run_test "Permission denied" "diff <(./pipex noperm 'cat' 'wc -l' outfile1 2>&1) <(< noperm cat | wc -l 2>&1)"
+
+# here_docテスト
+run_test "Here_doc test" "diff <(./pipex here_doc EOF 'grep a' 'wc -l' outfile1) <(cat << EOF | grep a | wc -l)"
+
+# Valgrindテスト
+run_test "Memory leak check" "valgrind --leak-check=full ./pipex infile 'cat' 'wc -l' outfile1"
 ```
 
 ## テスト項目
