@@ -19,10 +19,18 @@ char	*get_abs_path(char *command, char *envp[])
 	char	**paths;
 	char	*absolute_path;
 
-	if (!command || !envp)
+	if (!command)
+	{
+		print_error(-2, "");
 		return (NULL);
+	}
 	if (access(command, X_OK) == 0)
 		return (ft_strdup(command));
+	if (!envp)
+	{
+		print_error(-2, "");
+		return (NULL);
+	}
 	i = 0;
 	while (envp[i])
 	{
@@ -45,6 +53,6 @@ char	*get_abs_path(char *command, char *envp[])
 			return (absolute_path);
 		i++;
 	}
-	perror(command);
+	print_error(-2, command);
 	return (NULL);
 }

@@ -2,3 +2,4 @@
 pipex
 outfile*
 infile*
+__pycache__

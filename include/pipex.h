@@ -25,6 +25,7 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
+# include <string.h>
 # include "../../libft/libft.h"
 # include "../../get_next_line/get_next_line.h"
 
@@ -35,9 +36,10 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-_Bool	validate_input(int argc, char *argv[]);
+_Bool	validate_input(int argc);
 char	*get_abs_path(char *command, char *envp[]);
 void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
 void	here_doc(char *limiter);
+void 	print_error(int errno, char *filename);
 
 #endif

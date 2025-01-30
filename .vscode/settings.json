@@ -1,9 +1,13 @@
 {
-  "files.associations": {
-    "pipex.h": "c",
-    "libft.h": "c",
-    "wait.h": "c",
-    "unistd.h": "c",
-    "stdbool.h": "c"
-  }
+    "files.associations": {
+        "pipex.h": "c",
+        "libft.h": "c",
+        "wait.h": "c",
+        "unistd.h": "c",
+        "stdbool.h": "c",
+        "get_next_line.h": "c"
+    },
+    "python.testing.pytestArgs": ["."],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

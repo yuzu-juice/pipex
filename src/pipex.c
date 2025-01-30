@@ -23,9 +23,16 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	int	infile_fd;
 	int	outfile_fd;
 
+	if (cmd->abs_path == NULL)
+		return ;
 	if (is_first_cmd)
 	{
 		close(pipe_fd[CURR][READ]);
+		if (access(argv[1], R_OK) == -1)
+		{
+			print_error(-1, argv[1]);
+			exit (EXIT_FAILURE);
+		}
 		infile_fd = open(argv[1], O_RDONLY);
 		outfile_fd = pipe_fd[CURR][WRITE];
 	}
@@ -33,6 +40,11 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	{
 		close(pipe_fd[PREV][WRITE]);
 		infile_fd = pipe_fd[PREV][READ];
+		if (access(argv[argc - 1], F_OK) == 0 && access(argv[argc - 1], W_OK) == -1)
+		{
+			print_error(-1, argv[argc - 1]);
+			exit(EXIT_FAILURE);
+		}
 		outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
 	else
@@ -58,19 +70,18 @@ int	main(int argc, char *argv[], char *envp[])
 	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
 
-	if (!validate_input(argc, argv))
+	if (!validate_input(argc))
 		return (1);
-
-	init_cmds_list(&cmds_list, argc, argv, envp);
-	cmd = &cmds_list;
-	is_first_cmd = true;
-
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		here_doc(argv[2]);
 		argv[1] = HERE_DOC_FILE;
-		cmd = cmd->next;
+		init_cmds_list(&cmds_list, argc - 1, argv + 1, envp);
 	}
+	else
+		init_cmds_list(&cmds_list, argc, argv, envp);
+	cmd = &cmds_list;
+	is_first_cmd = true;
 
 	while (cmd)
 	{

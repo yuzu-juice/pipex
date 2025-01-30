@@ -25,7 +25,7 @@ void	here_doc(char *limiter)
 	}
 	while (true)
 	{
-		ft_printf("heredoc> ");
+		ft_printf("> ");
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
 			break ;
