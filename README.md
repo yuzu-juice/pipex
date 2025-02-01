@@ -142,7 +142,7 @@
 
     ```bash
     # pipexの実行
-    ./pipex here_doc EOF "grep a" "wc -l" outfile1 << EOF
+    ./pipex here_doc EOF "grep a" "wc -l" outfile1
     Hello World
     This is a test
     abc
@@ -165,7 +165,7 @@
 
     ```bash
     # pipexの実行
-    ./pipex here_doc LIMIT "grep test" "sed s/test/TEST/" outfile1 << LIMIT
+    ./pipex here_doc LIMIT "grep test" "sed s/test/TEST/" outfile1
     test1
     test2
     no match
@@ -216,42 +216,6 @@
 
 ```bash
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes ./pipex infile "cat" "wc -l" outfile
-```
-
-## 包括的なテストスクリプト
-
-```bash
-#!/bin/bash
-
-# テスト結果を保存するディレクトリ
-mkdir -p test_results
-
-# すべてのテストを実行
-run_test() {
-    echo "Running test: $1"
-    eval "$2"
-    if [ $? -eq 0 ]; then
-        echo "✅ Test passed: $1"
-    else
-        echo "❌ Test failed: $1"
-    fi
-    echo "-------------------"
-}
-
-# 基本テスト
-run_test "Basic pipe" "diff <(./pipex infile 'cat' 'wc -l' outfile1) <(< infile cat | wc -l)"
-
-# エラー処理テスト
-run_test "Nonexistent file" "diff <(./pipex nonexistent 'ls' 'wc -l' outfile1 2>&1) <(< nonexistent ls | wc -l 2>&1)"
-
-# 権限テスト
-run_test "Permission denied" "diff <(./pipex noperm 'cat' 'wc -l' outfile1 2>&1) <(< noperm cat | wc -l 2>&1)"
-
-# here_docテスト
-run_test "Here_doc test" "diff <(./pipex here_doc EOF 'grep a' 'wc -l' outfile1) <(cat << EOF | grep a | wc -l)"
-
-# Valgrindテスト
-run_test "Memory leak check" "valgrind --leak-check=full ./pipex infile 'cat' 'wc -l' outfile1"
 ```
 
 ## テスト項目
