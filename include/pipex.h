@@ -41,5 +41,6 @@ char	*get_abs_path(char *command, char *envp[]);
 void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
 void	here_doc(char *limiter);
 void 	print_error(int errno, char *filename);
+void	free_cmds_list(t_cmd *cmds_list);
 
 #endif

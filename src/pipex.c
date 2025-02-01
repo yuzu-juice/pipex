@@ -64,23 +64,24 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	t_cmd	cmds_list;
+	t_cmd	*cmds_list;
 	t_cmd	*cmd;
 	pid_t	pid;
 	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
 
-	if (!validate_input(argc))
+	if (argc < 5)
 		return (1);
+	cmds_list = malloc(sizeof(t_cmd));
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		here_doc(argv[2]);
 		argv[1] = HERE_DOC_FILE;
-		init_cmds_list(&cmds_list, argc - 1, argv + 1, envp);
+		init_cmds_list(cmds_list, argc - 1, argv + 1, envp);
 	}
 	else
-		init_cmds_list(&cmds_list, argc, argv, envp);
-	cmd = &cmds_list;
+		init_cmds_list(cmds_list, argc, argv, envp);
+	cmd = cmds_list;
 	is_first_cmd = true;
 
 	while (cmd)
@@ -106,5 +107,6 @@ int	main(int argc, char *argv[], char *envp[])
 	while (wait(NULL) > 0) ;
 	if (ft_strncmp(argv[1], HERE_DOC_FILE, 12) == 0)
 		unlink(".heredoc_tmp");
+	free_cmds_list(cmds_list);
 	return (0);
 }
