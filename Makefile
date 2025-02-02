@@ -4,6 +4,7 @@ SRCS	= src/pipex.c \
 		src/cmds_list_handler.c \
 		src/here_doc.c \
 		src/print_error.c \
+		src/utils.c \
 		src/get_next_line/get_next_line.c \
 		src/get_next_line/get_next_line_utils.c
 
