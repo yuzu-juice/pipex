@@ -17,6 +17,8 @@
 # define WRITE			1
 # define PREV			0
 # define CURR			1
+# define SUCCESS		0
+# define FAILURE		1
 # define HERE_DOC_FILE	".heredoc_tmp"
 
 # include <stdio.h>
@@ -36,10 +38,9 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-_Bool	validate_input(int argc);
 char	*get_abs_path(char *command, char *envp[]);
 void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
-void	here_doc(char *limiter);
+_Bool	here_doc(char *limiter);
 void 	print_error(int errno, char *filename);
 void	free_cmds_list(t_cmd *cmds_list);
 

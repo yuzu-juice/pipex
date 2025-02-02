@@ -12,7 +12,7 @@
 
 #include "../include/pipex.h"
 
-void	here_doc(char *limiter)
+_Bool	here_doc(char *limiter)
 {
 	char	*line;
 	int 	tmp_fd;
@@ -21,17 +21,14 @@ void	here_doc(char *limiter)
 	if (tmp_fd < 0)
 	{
 		print_error(-1, HERE_DOC_FILE);
-		exit(EXIT_FAILURE);
+		return (false);
 	}
 	while (true)
 	{
 		ft_printf("> ");
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
-		{
-			print_error(12, NULL);
-			exit(EXIT_FAILURE);
-		}
+			return (false);
 		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0 && line[ft_strlen(limiter)] == '\n')
 		{
 			free(line);
@@ -41,4 +38,5 @@ void	here_doc(char *limiter)
 		free(line);
 	}
 	close(tmp_fd);
+	return (true);
 }

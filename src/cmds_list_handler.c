@@ -24,7 +24,7 @@ static t_cmd *get_last_cmd(t_cmd *cmds_list)
 	return (last);
 }
 
-static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
+static _Bool	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 {
 	char	**splited;
 	t_cmd	*new_cmd;
@@ -34,11 +34,7 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 
 	splited = ft_split(str, ' ');
 	if (!splited)
-	{
-		free_cmds_list(cmds_list);
-		print_error(12, NULL);
-		exit(EXIT_FAILURE);
-	}
+		return (false);
 	i = 0;
 	while (splited[i])
 	{
@@ -47,12 +43,16 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 			tmp = splited[i];
 			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
 			free(tmp);
+			if (splited[i] == NULL)
+				return (false);
 		}
 		if (splited[i][0] == '\"' && splited[i][ft_strlen(splited[i]) - 1] == '\"')
 		{
 			tmp = splited[i];
 			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
 			free(tmp);
+			if (splited[i] == NULL)
+				return (false);
 		}
 		i++;
 	}
@@ -60,20 +60,19 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	{
 		cmds_list->cmd = splited;
 		cmds_list->abs_path = get_abs_path(splited[0], envp);
-		return ;
+		return (true);
 	}
 	new_cmd = malloc(sizeof(t_cmd));
 	if (!new_cmd)
-	{
-		free_cmds_list(cmds_list);
-		print_error(12, NULL);
-		exit(EXIT_FAILURE);
-	}
+		return (false);
 	new_cmd->cmd = splited;
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
+	if (new_cmd->abs_path == NULL)
+		return (false);
 	new_cmd->next = NULL;
 	last = get_last_cmd(cmds_list);
 	last->next = new_cmd;
+	return (true);
 }
 
 static void	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
