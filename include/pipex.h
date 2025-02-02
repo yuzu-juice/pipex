@@ -42,5 +42,7 @@ _Bool	here_doc(char *limiter);
 void 	print_error(int errno, char *filename);
 void	free_cmds_list(t_cmd *cmds_list);
 void	free_string_array(char **str_arr);
+void	close_pipe(int pipe_fd[2]);
+void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, char *argv[], char *envp[], t_cmd *cmds_list);
 
 #endif

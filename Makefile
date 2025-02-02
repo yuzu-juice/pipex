@@ -1,5 +1,6 @@
 NAME	= pipex
 SRCS	= src/pipex.c \
+		src/child_process.c \
 		src/get_abs_path.c \
 		src/cmds_list_handler.c \
 		src/here_doc.c \
