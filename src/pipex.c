@@ -73,7 +73,10 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	close(outfile_fd);
 	if (cmd->abs_path == NULL)
 	{
-		print_error(-2, cmd->cmd[0]);
+		if (cmd->cmd[0] == NULL)
+			print_error(-2, "");
+		else
+			print_error(-2, cmd->cmd[0]);
 		exit(EXIT_FAILURE) ;
 	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
