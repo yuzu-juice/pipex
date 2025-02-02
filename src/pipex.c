@@ -34,6 +34,11 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 			exit (EXIT_FAILURE);
 		}
 		infile_fd = open(argv[1], O_RDONLY);
+		if (infile_fd == -1)
+		{
+			print_error(-1, argv[1]);
+			exit(EXIT_FAILURE);
+		}
 		outfile_fd = pipe_fd[CURR][WRITE];
 	}
 	else if (cmd->next == NULL)
@@ -46,6 +51,11 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 			exit(EXIT_FAILURE);
 		}
 		outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (outfile_fd == -1)
+		{
+			print_error(-1, argv[argc - 1]);
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
@@ -64,23 +74,26 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	t_cmd	cmds_list;
+	t_cmd	*cmds_list;
 	t_cmd	*cmd;
 	pid_t	pid;
 	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
 
-	if (!validate_input(argc))
+	if (argc < 5)
 		return (1);
+	cmds_list = malloc(sizeof(t_cmd));
+	if (!cmds_list)
+		exit(EXIT_FAILURE);
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		here_doc(argv[2]);
 		argv[1] = HERE_DOC_FILE;
-		init_cmds_list(&cmds_list, argc - 1, argv + 1, envp);
+		init_cmds_list(cmds_list, argc - 1, argv + 1, envp);
 	}
 	else
-		init_cmds_list(&cmds_list, argc, argv, envp);
-	cmd = &cmds_list;
+		init_cmds_list(cmds_list, argc, argv, envp);
+	cmd = cmds_list;
 	is_first_cmd = true;
 
 	while (cmd)
@@ -88,7 +101,8 @@ int	main(int argc, char *argv[], char *envp[])
 		if (cmd->next != NULL)
 			pipe(pipe_fd[CURR]);
 		pid = fork();
-
+		if (pid == -1)
+			exit(EXIT_FAILURE);
 		if (pid == 0)
 			child_process(is_first_cmd, pipe_fd, cmd, argc, argv, envp);
 		if (!is_first_cmd)
@@ -106,5 +120,6 @@ int	main(int argc, char *argv[], char *envp[])
 	while (wait(NULL) > 0) ;
 	if (ft_strncmp(argv[1], HERE_DOC_FILE, 12) == 0)
 		unlink(".heredoc_tmp");
+	free_cmds_list(cmds_list);
 	return (0);
 }

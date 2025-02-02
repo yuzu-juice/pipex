@@ -38,6 +38,11 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 		return ;
 	}
 	new_cmd = malloc(sizeof(t_cmd));
+	if (!new_cmd)
+	{
+		free_cmds_list(cmds_list);
+		exit(EXIT_FAILURE);
+	}
 	new_cmd->cmd = splited;
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
 	new_cmd->next = NULL;
@@ -67,18 +72,31 @@ void	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
 	split_cmds(argc, argv, envp, cmds_list);
 }
 
+static void free_cmd(t_cmd *cmd)
+{
+	int		i;
+
+	i = 0;
+	while (cmd->cmd[i])
+	{
+		free(cmd->cmd[i]);
+		i++;
+	}
+	free(cmd->cmd);
+    free(cmd->abs_path);
+}
+
 void	free_cmds_list(t_cmd *cmds_list)
 {
-	t_cmd	*tmp;
-	t_cmd	*cmd;
+    t_cmd *tmp;
+    t_cmd *cmd;
 
-	cmd = cmds_list;
-	while (cmds_list)
-	{
-		tmp = cmds_list;
-		cmd = cmd->next;
-		free(tmp->cmd);
-		free(tmp->abs_path);
-		free(tmp);
-	}
+    cmd = cmds_list;
+    while (cmd) {
+        tmp = cmd;
+        cmd = cmd->next;
+
+        free_cmd(tmp);
+        free(tmp);
+    }
 }

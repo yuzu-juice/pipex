@@ -12,6 +12,19 @@
 
 #include "../include/pipex.h"
 
+static void	free_paths(char **paths)
+{
+	size_t	i;
+
+	i = 0;
+	while (paths[i])
+	{
+		free(paths[i]);
+		i++;
+	}
+	free(paths);
+}
+
 char	*get_abs_path(char *command, char *envp[])
 {
 	size_t	i;
@@ -46,13 +59,22 @@ char	*get_abs_path(char *command, char *envp[])
 	{
 		path_len = ft_strlen(paths[i]) + ft_strlen(command) + 2;
 		absolute_path = malloc(sizeof(char) * path_len);
+		if (!absolute_path)
+			exit(EXIT_FAILURE);
 		ft_strlcpy(absolute_path, paths[i], path_len);
 		ft_strlcat(absolute_path, "/", path_len);
 		ft_strlcat(absolute_path, command, path_len);
 		if (access(absolute_path, X_OK) == 0)
+		{
+			free_paths(paths);
 			return (absolute_path);
+		}
+		free(absolute_path);
 		i++;
 	}
+	i = 0;
+	free_paths(paths);
+	free(paths);
 	print_error(-2, command);
 	return (NULL);
 }
