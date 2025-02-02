@@ -18,6 +18,8 @@
 # define PREV			0
 # define CURR			1
 # define HERE_DOC_FILE	"/tmp/.heredoc_tmp42"
+# define ERROR			0
+# define CMD_NOT_FOUND	1
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -26,6 +28,7 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <string.h>
+# include <errno.h>
 # include "../../libft/libft.h"
 # include "./get_next_line.h"
 

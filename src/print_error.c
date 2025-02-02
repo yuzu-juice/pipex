@@ -1,18 +1,9 @@
 #include "../include/pipex.h"
 
-void	print_error(int errno, char *filename)
+void	print_error(int err, char *name)
 {
-	write(2, "bash: ", 6);
-	if (errno == -1)
-		perror(filename);
-	else if (errno == -2)
-	{
-		write(2, filename, ft_strlen(filename));
-		write(2, ": command not found\n", 20);
-	}
-	else
-	{
-		write(2, strerror(errno), ft_strlen(strerror(errno)));
-		write(2, "\n", 1);
-	}
+	if (err == ERROR)
+		ft_fprintf(2, "bash: %s: %s\n", name, strerror(errno));
+	else if (err == CMD_NOT_FOUND)
+		ft_fprintf(2, "bash: %s: command not found\n", name);
 }
