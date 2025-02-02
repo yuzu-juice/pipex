@@ -36,19 +36,9 @@
     # テストファイル作成
     dd if=/dev/urandom of=bigfile bs=1M count=100
 
-    # 基本テスト
+    # テスト実行
     ./pipex bigfile "cat" "wc -l" outfile1
     < bigfile cat | wc -l > outfile2
-    diff outfile1 outfile2
-
-    # 圧縮テスト
-    ./pipex bigfile "cat" "gzip" outfile1.gz
-    < bigfile cat | gzip > outfile2.gz
-    cmp outfile1.gz outfile2.gz
-
-    # バイナリ処理テスト
-    ./pipex bigfile "xxd" "head -n 1000" outfile1
-    < bigfile xxd | head -n 1000 > outfile2
     diff outfile1 outfile2
     ```
 
