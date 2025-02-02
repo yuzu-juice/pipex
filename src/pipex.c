@@ -87,30 +87,27 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	t_cmd	*cmds_list;
 	t_cmd	*cmd;
+	t_cmd	*cmds_list;
 	pid_t	pid;
 	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
 
 	if (argc < 5)
-		return (FAILURE);
-	cmds_list = malloc(sizeof(t_cmd));
-	if (!cmds_list)
-		exit(EXIT_FAILURE);
+		return (1);
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (1);
+	cmds_list = cmd;
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
-		if (here_doc(argv[2]) == FAILURE)
-		{
-			free_cmds_list(cmds_list);
-			return(FAILURE);
-		}
+		if (!here_doc(argv[2]))
+			return (free(cmd), 1);
 		argv[1] = HERE_DOC_FILE;
-		init_cmds_list(cmds_list, argc - 1, argv + 1, envp);
+		init_cmds_list(cmd, argc - 1, argv + 1, envp);
 	}
 	else
-		init_cmds_list(cmds_list, argc, argv, envp);
-	cmd = cmds_list;
+		init_cmds_list(cmd, argc, argv, envp);
 	is_first_cmd = true;
 
 	while (cmd)
@@ -118,8 +115,8 @@ int	main(int argc, char *argv[], char *envp[])
 		if (cmd->next != NULL)
 			pipe(pipe_fd[CURR]);
 		pid = fork();
-		if (pid == -1)
-			exit(EXIT_FAILURE);
+		if (pid < 0)
+			return (free_cmds_list(cmds_list), 1);
 		if (pid == 0)
 			child_process(is_first_cmd, pipe_fd, cmd, argc, argv, envp, cmds_list);
 		if (!is_first_cmd)
@@ -135,8 +132,8 @@ int	main(int argc, char *argv[], char *envp[])
 		is_first_cmd = false;
 	}
 	while (wait(NULL) > 0) ;
-	if (ft_strncmp(argv[1], HERE_DOC_FILE, 12) == 0)
-		unlink(".heredoc_tmp");
+	if (ft_strncmp(argv[1], HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
+		unlink(HERE_DOC_FILE);
 	free_cmds_list(cmds_list);
-	return (SUCCESS);
+	return (0);
 }

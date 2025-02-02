@@ -17,9 +17,7 @@
 # define WRITE			1
 # define PREV			0
 # define CURR			1
-# define SUCCESS		0
-# define FAILURE		1
-# define HERE_DOC_FILE	".heredoc_tmp"
+# define HERE_DOC_FILE	"/tmp/.heredoc_tmp42"
 
 # include <stdio.h>
 # include <stdlib.h>
