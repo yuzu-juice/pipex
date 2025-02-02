@@ -14,18 +14,8 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	if (is_first_cmd)
 	{
 		close(pipe_fd[CURR][READ]);
-		if (access(argv[1], F_OK) == -1)
-		{
-			print_error(-1, argv[1]);
-			exit(EXIT_FAILURE) ;
-		}
-		if (access(argv[1], R_OK) == -1)
-		{
-			print_error(-1, argv[1]);
-			return ;
-		}
 		infile_fd = open(argv[1], O_RDONLY);
-		if (infile_fd == -1)
+		if (infile_fd < 0)
 		{
 			print_error(-1, argv[1]);
 			free_cmds_list(cmds_list);
@@ -37,13 +27,8 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	{
 		close(pipe_fd[PREV][WRITE]);
 		infile_fd = pipe_fd[PREV][READ];
-		if (access(argv[argc - 1], F_OK) == 0 && access(argv[argc - 1], W_OK) == -1)
-		{
-			print_error(-1, argv[argc - 1]);
-			exit(EXIT_FAILURE);
-		}
 		outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (outfile_fd == -1)
+		if (outfile_fd < 0)
 		{
 			print_error(-1, argv[argc - 1]);
 			free_cmds_list(cmds_list);
@@ -70,5 +55,8 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 		exit(EXIT_FAILURE) ;
 	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
-		ft_printf("An error has occured.\n");
+	{
+		free_cmds_list(cmds_list);
+		exit (EXIT_FAILURE);
+	}
 }

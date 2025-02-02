@@ -20,7 +20,10 @@ int	main(int argc, char *argv[], char *envp[])
 	pid_t	pid;
 	int		pipe_fd[2][2];
 	_Bool	is_first_cmd;
+	int		status;
+	int		flag;
 
+	flag = 0;
 	if (argc < 5)
 		return (1);
 	cmd = malloc(sizeof(t_cmd));
@@ -59,9 +62,13 @@ int	main(int argc, char *argv[], char *envp[])
 		cmd = cmd->next;
 		is_first_cmd = false;
 	}
-	while (wait(NULL) > 0) ;
+	while (wait(&status) > 0)
+	{
+		if(!WIFEXITED(status))
+			flag = 1;
+	}
 	if (ft_strncmp(argv[1], HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
 		unlink(HERE_DOC_FILE);
 	free_cmds_list(cmds_list);
-	return (0);
+	return (flag);
 }
