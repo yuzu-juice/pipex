@@ -41,6 +41,7 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	if (!new_cmd)
 	{
 		free_cmds_list(cmds_list);
+		print_error(12, NULL);
 		exit(EXIT_FAILURE);
 	}
 	new_cmd->cmd = splited;
