@@ -29,8 +29,33 @@ static void	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	char	**splited;
 	t_cmd	*new_cmd;
 	t_cmd	*last;
+	int		i;
+	char 	*tmp;
 
 	splited = ft_split(str, ' ');
+	if (!splited)
+	{
+		free_cmds_list(cmds_list);
+		print_error(12, NULL);
+		exit(EXIT_FAILURE);
+	}
+	i = 0;
+	while (splited[i])
+	{
+		if (splited[i][0] == '\'' && splited[i][ft_strlen(splited[i]) - 1] == '\'')
+		{
+			tmp = splited[i];
+			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
+			free(tmp);
+		}
+		if (splited[i][0] == '\"' && splited[i][ft_strlen(splited[i]) - 1] == '\"')
+		{
+			tmp = splited[i];
+			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
+			free(tmp);
+		}
+		i++;
+	}
 	if (cmds_list->cmd == NULL)
 	{
 		cmds_list->cmd = splited;

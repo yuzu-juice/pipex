@@ -178,7 +178,7 @@
 
     ```bash
     # pipexの実行
-    ./pipex here_doc LIMIT "grep test" "sed s/test/TEST/" outfile1
+    ./pipex here_doc LIMIT "grep test" "sed 's/test/TEST/'" outfile1
     test1
     test2
     no match
@@ -186,7 +186,7 @@
     LIMIT
 
     # bashの実行
-    cat << LIMIT | grep test | sed s/test/TEST/ > outfile2
+    cat << LIMIT | grep test | sed 's/test/TEST/' > outfile2
     test1
     test2
     no match
