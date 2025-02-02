@@ -50,7 +50,7 @@
     # 終了コードの確認
     ./pipex nonexistent "ls" "wc -l" outfile1
     echo $? > status1
-    < nonexistent ls | wc -l > outfile2 2>/dev/null
+    < nonexistent ls | wc -l > outfile2
     echo $? > status2
     diff status1 status2
     ```
@@ -62,18 +62,41 @@
     echo "test" > infile
 
     # 終了コードとエラーメッセージの確認
-    ./pipex infile "" "wc -l" outfile1 2>error1
+    ./pipex infile "" "wc -l" outfile1
     echo $? > status1
-    < infile "" | wc -l > outfile2 2>error2
+    < infile "" | wc -l > outfile2
     echo $? > status2
     diff status1 status2
     ```
 
 -   無効なコマンド
+
     ```bash
-    ./pipex infile "invalidcmd" "wc -l" outfile1 2>error1
+    ./pipex infile "invalidcmd" "wc -l" outfile1
     echo $? > status1
-    < infile invalidcmd | wc -l > outfile2 2>error2
+    < infile invalidcmd | wc -l > outfile2
+    echo $? > status2
+    diff status1 status2
+    ```
+
+-   存在しないファイル & 空のコマンド
+
+    ```bash
+    # 終了コードとエラーメッセージの確認
+    ./pipex nonexistent "" "wc -l" outfile1
+    echo $? > status1
+    < nonexistent "" | wc -l > outfile2
+    echo $? > status2
+    diff status1 status2
+    ```
+
+-   存在しないファイル & 無効なコマンド
+
+    ```bash
+    # 終了コードとエラーメッセージの確認
+    ./pipex nonexistent "invalidcmd" "wc -l" outfile1
+    echo $? > status1
+    < nonexistent invalidcmd | wc -l > outfile2
     echo $? > status2
     diff status1 status2
     ```
@@ -88,9 +111,9 @@
     chmod 000 noperm_input
 
     # テスト実行
-    ./pipex noperm_input "cat" "wc -l" outfile1 2>error1
+    ./pipex noperm_input "cat" "wc -l" outfile1
     echo $? > status1
-    < noperm_input cat | wc -l > outfile2 2>error2
+    < noperm_input cat | wc -l > outfile2
     echo $? > status2
     diff status1 status2
 
@@ -106,9 +129,9 @@
     chmod 444 noperm_output
 
     # テスト実行
-    ./pipex infile "cat" "wc -l" noperm_output 2>error1
+    ./pipex infile "cat" "wc -l" noperm_output
     echo $? > status1
-    < infile cat | wc -l > noperm_output 2>error2
+    < infile cat | wc -l > noperm_output
     echo $? > status2
     diff status1 status2
 

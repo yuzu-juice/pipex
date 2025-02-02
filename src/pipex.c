@@ -23,15 +23,18 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	int	infile_fd;
 	int	outfile_fd;
 
-	if (cmd->abs_path == NULL)
-		return ;
 	if (is_first_cmd)
 	{
 		close(pipe_fd[CURR][READ]);
+		if (access(argv[1], F_OK) == -1)
+		{
+			print_error(-1, argv[1]);
+			exit(EXIT_FAILURE) ;
+		}
 		if (access(argv[1], R_OK) == -1)
 		{
 			print_error(-1, argv[1]);
-			exit (EXIT_FAILURE);
+			return ;
 		}
 		infile_fd = open(argv[1], O_RDONLY);
 		if (infile_fd == -1)
@@ -68,6 +71,11 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	close(infile_fd);
 	dup2(outfile_fd, STDOUT_FILENO);
 	close(outfile_fd);
+	if (cmd->abs_path == NULL)
+	{
+		print_error(-2, cmd->cmd[0]);
+		exit(EXIT_FAILURE) ;
+	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 		ft_printf("An error has occured.\n");
 }
@@ -84,7 +92,10 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	cmds_list = malloc(sizeof(t_cmd));
 	if (!cmds_list)
+	{
+		print_error(12, NULL);
 		exit(EXIT_FAILURE);
+	}
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		here_doc(argv[2]);

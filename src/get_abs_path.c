@@ -33,17 +33,11 @@ char	*get_abs_path(char *command, char *envp[])
 	char	*absolute_path;
 
 	if (!command)
-	{
-		print_error(-2, "");
 		return (NULL);
-	}
 	if (access(command, X_OK) == 0)
 		return (ft_strdup(command));
 	if (!envp)
-	{
-		print_error(-2, "");
 		return (NULL);
-	}
 	i = 0;
 	while (envp[i])
 	{
@@ -60,7 +54,10 @@ char	*get_abs_path(char *command, char *envp[])
 		path_len = ft_strlen(paths[i]) + ft_strlen(command) + 2;
 		absolute_path = malloc(sizeof(char) * path_len);
 		if (!absolute_path)
+		{
+			print_error(12, NULL);
 			exit(EXIT_FAILURE);
+		}
 		ft_strlcpy(absolute_path, paths[i], path_len);
 		ft_strlcat(absolute_path, "/", path_len);
 		ft_strlcat(absolute_path, command, path_len);
@@ -74,7 +71,5 @@ char	*get_abs_path(char *command, char *envp[])
 	}
 	i = 0;
 	free_paths(paths);
-	free(paths);
-	print_error(-2, command);
 	return (NULL);
 }
