@@ -2,17 +2,17 @@
 
 void	print_error(int errno, char *filename)
 {
-	int	saved_stdout;
-
-	saved_stdout = dup(STDOUT_FILENO);
-	dup2(STDERR_FILENO, STDOUT_FILENO);
-	ft_printf("bash: ");
+	write(2, "bash: ", 6);
 	if (errno == -1)
 		perror(filename);
 	else if (errno == -2)
-		ft_printf("%s: command not found\n", filename);
+	{
+		write(2, filename, ft_strlen(filename));
+		write(2, ": command not found\n", 20);
+	}
 	else
-		ft_printf("%s\n", strerror(errno));
-	dup2(saved_stdout, STDOUT_FILENO);
-	close(saved_stdout);
+	{
+		write(2, strerror(errno), ft_strlen(strerror(errno)));
+		write(2, "\n", 1);
+	}
 }
