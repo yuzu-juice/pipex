@@ -29,7 +29,7 @@
 # include <fcntl.h>
 # include <string.h>
 # include "../../libft/libft.h"
-# include "../../get_next_line/get_next_line.h"
+# include "./get_next_line.h"
 
 typedef struct s_cmd
 {
@@ -43,5 +43,6 @@ void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
 _Bool	here_doc(char *limiter);
 void 	print_error(int errno, char *filename);
 void	free_cmds_list(t_cmd *cmds_list);
+void	free_string_array(char **str_arr);
 
 #endif

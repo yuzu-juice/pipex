@@ -12,19 +12,6 @@
 
 #include "../include/pipex.h"
 
-static void	free_string_array(char **paths)
-{
-	size_t	i;
-
-	i = 0;
-	while (paths[i])
-	{
-		free(paths[i]);
-		i++;
-	}
-	free(paths);
-}
-
 char	*get_abs_path(char *command, char *envp[])
 {
 	size_t	i;
