@@ -54,22 +54,16 @@ char	*get_abs_path(char *command, char *envp[])
 	if (access(command, X_OK) == 0)
 		return (ft_strdup(command));
 	paths = get_paths_from_env(envp);
-	if (paths == NULL)
+	if (!paths)
 		return (NULL);
 	i = 0;
 	while (paths[i])
 	{
 		absolute_path = build_executable_path(paths[i], command);
 		if (!absolute_path)
-		{
-			free_string_array(paths);
-			return (NULL);
-		}
+			return (free_string_array(paths), NULL);
 		if (access(absolute_path, X_OK) == 0)
-		{
-			free_string_array(paths);
-			return (absolute_path);
-		}
+			return (free_string_array(paths), absolute_path);
 		free(absolute_path);
 		i++;
 	}
