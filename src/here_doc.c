@@ -25,7 +25,7 @@ _Bool	here_doc(char *limiter)
 		ft_printf("> ");
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
-			return (false);
+			return (close(tmp_fd), false);
 		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0
 			&& line[ft_strlen(limiter)] == '\n')
 		{

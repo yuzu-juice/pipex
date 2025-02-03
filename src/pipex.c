@@ -21,14 +21,9 @@ static int	pipex(int argc, char *argv[], char *envp[])
 	_Bool	is_first_cmd;
 	int		status;
 	int		flag;
-	char	*infile;
-	char	*outfile;
 
 	flag = 0;
-	infile = argv[1];
-	outfile = argv[argc - 1];
 	init_cmds_list(&cmds_list, argc, argv, envp);
-	cmd = &cmds_list;
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		if (!here_doc(argv[2]))
@@ -36,6 +31,7 @@ static int	pipex(int argc, char *argv[], char *envp[])
 		argv[1] = HERE_DOC_FILE;
 	}
 	is_first_cmd = true;
+	cmd = &cmds_list;
 	while (cmd)
 	{
 		if (cmd->next != NULL)
@@ -44,7 +40,7 @@ static int	pipex(int argc, char *argv[], char *envp[])
 		if (pid < 0)
 			return (free_cmds_list(&cmds_list), 1);
 		if (pid == 0)
-			child_process(is_first_cmd, pipe_fd, cmd, infile, outfile, envp, &cmds_list);
+			child_process(is_first_cmd, pipe_fd, cmd, argv[1], argv[argc - 1], envp, &cmds_list);
 		if (!is_first_cmd)
 			close_pipe(pipe_fd[PREV]);
 		if (cmd->next == NULL)
