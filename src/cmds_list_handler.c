@@ -24,38 +24,41 @@ static t_cmd *get_last_cmd(t_cmd *cmds_list)
 	return (last);
 }
 
+static _Bool	remove_quotes(char **tokens)
+{
+	int		i;
+	size_t	len;
+	char	*tmp;
+
+	i = 0;
+	while (tokens[i])
+	{
+		len = ft_strlen(tokens[i]);
+		if (len >= 2 && ((tokens[i][0] == '\'' && tokens[i][len - 1] == '\'') ||
+			(tokens[i][0] == '"' && tokens[i][len - 1] == '"')))
+		{
+			tmp = tokens[i];
+			tokens[i] = ft_substr(tokens[i], 1, len - 2);
+			free(tmp);
+			if (tokens[i] == NULL)
+				return (false);
+		}
+		i++;
+	}
+	return (true);
+}
+
 static _Bool	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 {
 	char	**splited;
 	t_cmd	*new_cmd;
 	t_cmd	*last;
-	int		i;
-	char 	*tmp;
 
 	splited = ft_split(str, ' ');
 	if (!splited)
 		return (false);
-	i = 0;
-	while (splited[i])
-	{
-		if (splited[i][0] == '\'' && splited[i][ft_strlen(splited[i]) - 1] == '\'')
-		{
-			tmp = splited[i];
-			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
-			free(tmp);
-			if (splited[i] == NULL)
-				return (false);
-		}
-		if (splited[i][0] == '\"' && splited[i][ft_strlen(splited[i]) - 1] == '\"')
-		{
-			tmp = splited[i];
-			splited[i] = ft_substr(splited[i], 1, ft_strlen(splited[i]) - 2);
-			free(tmp);
-			if (splited[i] == NULL)
-				return (false);
-		}
-		i++;
-	}
+	if (!remove_quotes(splited))
+		return (free_string_array(splited), false);
 	if (cmds_list->cmd == NULL)
 	{
 		cmds_list->cmd = splited;
@@ -64,11 +67,11 @@ static _Bool	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 	}
 	new_cmd = ft_calloc(sizeof(t_cmd), 1);
 	if (!new_cmd)
-		return (false);
+		return (free_string_array(splited), false);
 	new_cmd->cmd = splited;
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
 	if (new_cmd->abs_path == NULL)
-		return (false);
+		return (free_string_array(splited), free(new_cmd), false);
 	new_cmd->next = NULL;
 	last = get_last_cmd(cmds_list);
 	last->next = new_cmd;
