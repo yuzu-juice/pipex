@@ -31,7 +31,7 @@ void	free_cmds_list(t_cmd *cmds_list)
 	t_cmd	*tmp;
 	t_cmd	*cmd;
 
-	cmd = cmds_list;
+	cmd = cmds_list->next;
 	while (cmd)
 	{
 		tmp = cmd;
