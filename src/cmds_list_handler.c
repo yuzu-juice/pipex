@@ -12,7 +12,7 @@
 
 #include "../include/pipex.h"
 
-static t_cmd *get_last_cmd(t_cmd *cmds_list)
+static t_cmd	*get_last_cmd(t_cmd *cmds_list)
 {
 	t_cmd	*last;
 

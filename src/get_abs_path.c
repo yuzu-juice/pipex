@@ -14,7 +14,9 @@
 
 static char	**get_paths_from_env(char *envp[])
 {
-	size_t	i = 0;
+	size_t	i;
+
+	i = 0;
 	if (!envp)
 		return (NULL);
 	while (envp[i])

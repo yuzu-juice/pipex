@@ -6,7 +6,7 @@
 /*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 20:39:42 by takitaga          #+#    #+#             */
-/*   Updated: 2025/02/03 20:39:42 by takitaga         ###   ########.fr       */
+/*   Updated: 2025/02/03 21:13:52 by takitaga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,22 @@ static void free_cmd(t_cmd *cmd)
 		i++;
 	}
 	free(cmd->cmd);
-    free(cmd->abs_path);
+	free(cmd->abs_path);
 }
 
 void	free_cmds_list(t_cmd *cmds_list)
 {
-    t_cmd *tmp;
-    t_cmd *cmd;
+	t_cmd *tmp;
+	t_cmd *cmd;
 
-    cmd = cmds_list;
-    while (cmd) {
-        tmp = cmd;
-        cmd = cmd->next;
+	cmd = cmds_list;
+	while (cmd) {
+		tmp = cmd;
+		cmd = cmd->next;
 
-        free_cmd(tmp);
-        free(tmp);
-    }
+		free_cmd(tmp);
+		free(tmp);
+	}
 }
 
 void	free_string_array(char **str_arr)

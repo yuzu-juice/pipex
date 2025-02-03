@@ -15,21 +15,19 @@
 _Bool	here_doc(char *limiter)
 {
 	char	*line;
-	int 	tmp_fd;
+	int		tmp_fd;
 
 	tmp_fd = open(HERE_DOC_FILE, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (tmp_fd < 0)
-	{
-		print_error(-1, HERE_DOC_FILE);
-		return (false);
-	}
+		return (print_error(ERROR, HERE_DOC_FILE), false);
 	while (true)
 	{
 		ft_printf("> ");
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
 			return (false);
-		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0 && line[ft_strlen(limiter)] == '\n')
+		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0
+			&& line[ft_strlen(limiter)] == '\n')
 		{
 			free(line);
 			break ;

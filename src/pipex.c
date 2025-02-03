@@ -68,7 +68,7 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	while (wait(&status) > 0)
 	{
-		if(!WIFEXITED(status))
+		if (!WIFEXITED(status))
 			flag = 1;
 	}
 	if (ft_strncmp(argv[1], HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
