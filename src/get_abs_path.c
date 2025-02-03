@@ -41,7 +41,7 @@ char	*get_abs_path(char *command, char *envp[])
 	while (paths[i])
 	{
 		path_len = ft_strlen(paths[i]) + ft_strlen(command) + 2;
-		absolute_path = malloc(sizeof(char) * path_len);
+		absolute_path = ft_calloc(sizeof(char), path_len);
 		if (!absolute_path)
 		{
 			free_string_array(paths);

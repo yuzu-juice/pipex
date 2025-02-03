@@ -17,7 +17,7 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 		infile_fd = open(argv[1], O_RDONLY);
 		if (infile_fd < 0)
 		{
-			print_error(-1, argv[1]);
+			print_error(ERROR, argv[1]);
 			free_cmds_list(cmds_list);
 			exit(EXIT_FAILURE);
 		}
@@ -30,7 +30,7 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 		outfile_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile_fd < 0)
 		{
-			print_error(-1, argv[argc - 1]);
+			print_error(ERROR, argv[argc - 1]);
 			free_cmds_list(cmds_list);
 			exit(EXIT_FAILURE);
 		}
@@ -49,9 +49,9 @@ void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, int argc, 
 	if (cmd->abs_path == NULL)
 	{
 		if (cmd->cmd[0] == NULL)
-			print_error(-2, "");
+			print_error(CMD_NOT_FOUND, "");
 		else
-			print_error(-2, cmd->cmd[0]);
+			print_error(CMD_NOT_FOUND, cmd->cmd[0]);
 		exit(EXIT_FAILURE) ;
 	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)

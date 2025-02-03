@@ -26,7 +26,7 @@ int	main(int argc, char *argv[], char *envp[])
 	flag = 0;
 	if (argc < 5)
 		return (1);
-	cmd = malloc(sizeof(t_cmd));
+	cmd = ft_calloc(sizeof(t_cmd), 1);
 	if (!cmd)
 		return (1);
 	cmds_list = cmd;

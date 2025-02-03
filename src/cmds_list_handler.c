@@ -62,7 +62,7 @@ static _Bool	append_cmd(char *str, t_cmd *cmds_list, char *envp[])
 		cmds_list->abs_path = get_abs_path(splited[0], envp);
 		return (true);
 	}
-	new_cmd = malloc(sizeof(t_cmd));
+	new_cmd = ft_calloc(sizeof(t_cmd), 1);
 	if (!new_cmd)
 		return (false);
 	new_cmd->cmd = splited;
