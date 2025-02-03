@@ -30,6 +30,20 @@
     diff outfile1 outfile2
     ```
 
+-   複数コマンド: `cat | grep test | wc -l`
+
+    ```bash
+    # テストファイル作成
+    echo -e "test1\nno match\ntest2\ntest3" > infile
+
+    # テスト実行
+    ./pipex infile "cat" "grep test" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" "wc -l" outfile1
+    < infile cat | grep test | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l | wc -l > outfile2
+
+    # 結果比較
+    diff outfile1 outfile2
+    ```
+
 -   でっけぇファイル
 
     ```bash
