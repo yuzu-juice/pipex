@@ -12,9 +12,9 @@
 
 #include "../include/pipex.h"
 
-static void free_cmd(t_cmd *cmd)
+static void	free_cmd(t_cmd *cmd)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (cmd->cmd[i])
@@ -28,14 +28,14 @@ static void free_cmd(t_cmd *cmd)
 
 void	free_cmds_list(t_cmd *cmds_list)
 {
-	t_cmd *tmp;
-	t_cmd *cmd;
+	t_cmd	*tmp;
+	t_cmd	*cmd;
 
 	cmd = cmds_list;
-	while (cmd) {
+	while (cmd)
+	{
 		tmp = cmd;
 		cmd = cmd->next;
-
 		free_cmd(tmp);
 		free(tmp);
 	}

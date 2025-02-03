@@ -12,7 +12,6 @@
 
 #include "../include/pipex.h"
 
-
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_cmd	*cmd;
@@ -44,7 +43,6 @@ int	main(int argc, char *argv[], char *envp[])
 	else
 		init_cmds_list(cmd, argc, argv, envp);
 	is_first_cmd = true;
-
 	while (cmd)
 	{
 		if (cmd->next != NULL)
