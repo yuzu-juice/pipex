@@ -12,9 +12,8 @@
 
 #include "../include/pipex.h"
 
-void    free_string_array(char **str_arr)
+void	free_string_array(char **str_arr)
 {
-
 	size_t	i;
 
 	i = 0;

@@ -40,9 +40,9 @@ typedef struct s_cmd
 }	t_cmd;
 
 char	*get_abs_path(char *command, char *envp[]);
-void 	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
+void	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
 _Bool	here_doc(char *limiter);
-void 	print_error(int err, char *name);
+void	print_error(int err, char *name);
 void	free_cmds_list(t_cmd *cmds_list);
 void	free_string_array(char **str_arr);
 void	close_pipe(int pipe_fd[2]);
