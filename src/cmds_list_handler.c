@@ -96,32 +96,3 @@ void	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
 	cmds_list->next = NULL;
 	split_cmds(argc, argv, envp, cmds_list);
 }
-
-static void free_cmd(t_cmd *cmd)
-{
-	int		i;
-
-	i = 0;
-	while (cmd->cmd[i])
-	{
-		free(cmd->cmd[i]);
-		i++;
-	}
-	free(cmd->cmd);
-    free(cmd->abs_path);
-}
-
-void	free_cmds_list(t_cmd *cmds_list)
-{
-    t_cmd *tmp;
-    t_cmd *cmd;
-
-    cmd = cmds_list;
-    while (cmd) {
-        tmp = cmd;
-        cmd = cmd->next;
-
-        free_cmd(tmp);
-        free(tmp);
-    }
-}
