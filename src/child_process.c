@@ -12,12 +12,6 @@
 
 #include "../include/pipex.h"
 
-void	close_pipe(int pipe_fd[2])
-{
-	close(pipe_fd[READ]);
-	close(pipe_fd[WRITE]);
-}
-
 static void	handle_first_cmd(int pipe_fd[2][2], char *infile, t_cmd *cmds_list, int *infile_fd, int *outfile_fd)
 {
 	*infile_fd = open(infile, O_RDONLY);

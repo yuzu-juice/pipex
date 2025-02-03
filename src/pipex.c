@@ -12,6 +12,12 @@
 
 #include "../include/pipex.h"
 
+void	close_pipe(int pipe_fd[2])
+{
+	close(pipe_fd[READ]);
+	close(pipe_fd[WRITE]);
+}
+
 static int	pipex(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
@@ -23,18 +29,18 @@ static int	pipex(int argc, char *argv[], char *envp[])
 	int		flag;
 
 	flag = 0;
-	init_cmds_list(&cmds_list, argc, argv, envp);
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		if (!here_doc(argv[2]))
 			return (free_cmds_list(&cmds_list), 1);
 		argv[1] = HERE_DOC_FILE;
 	}
+	init_cmds_list(&cmds_list, argc, argv, envp);
 	is_first_cmd = true;
-	cmd = &cmds_list;
+	cmd = cmds_list.next;
 	while (cmd)
 	{
-		if (cmd->next != NULL)
+		if (cmd->next)
 			pipe(pipe_fd[CURR]);
 		pid = fork();
 		if (pid < 0)
