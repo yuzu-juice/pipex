@@ -12,6 +12,12 @@
 
 #include "../include/pipex.h"
 
+void	close_pipe(int pipe_fd[2])
+{
+	close(pipe_fd[READ]);
+	close(pipe_fd[WRITE]);
+}
+
 static void	free_cmd(t_cmd *cmd)
 {
 	int	i;

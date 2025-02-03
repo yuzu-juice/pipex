@@ -6,17 +6,11 @@
 /*   By: takitaga  <takitaga@student.42tokyo.>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 13:54:05 by takitaga          #+#    #+#             */
-/*   Updated: 2025/01/28 00:12:42 by takitaga         ###   ########.fr       */
+/*   Updated: 2025/02/04 00:12:42 by takitaga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
-
-void	close_pipe(int pipe_fd[2])
-{
-	close(pipe_fd[READ]);
-	close(pipe_fd[WRITE]);
-}
 
 static void	finalize(char *here_doc, t_cmd *cmds_list)
 {
