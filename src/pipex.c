@@ -25,11 +25,13 @@ static void	finalize(char *here_doc, t_cmd *cmds_list)
 	free_cmds_list(cmds_list);
 }
 
-static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char *envp[], _Bool is_first_cmd)
+static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char *envp[])
 {
 	pid_t	pid;
-	int pipe_fd[2][2];
+	int		pipe_fd[2][2];
+	_Bool	is_first_cmd;
 
+	is_first_cmd = true;
 	while (cmd)
 	{
 		if (cmd->next)
@@ -58,7 +60,6 @@ static int	pipex(int argc, char *argv[], char *envp[])
 {
 	t_cmd	cmds_list;
 	t_cmd	*cmd;
-	_Bool	is_first_cmd;
 	int		status;
 	int		ret_val;
 
@@ -71,9 +72,8 @@ static int	pipex(int argc, char *argv[], char *envp[])
 	}
 	if (!init_cmds_list(&cmds_list, argc, argv, envp))
 		return (finalize(argv[1], &cmds_list), 1);
-	is_first_cmd = true;
 	cmd = cmds_list.next;
-	ret_val = handle_cmd(cmd, &cmds_list, argc, argv, envp, is_first_cmd);
+	ret_val = handle_cmd(cmd, &cmds_list, argc, argv, envp);
 	while (wait(&status) > 0)
 		if (!WIFEXITED(status))
 			ret_val = 1;
