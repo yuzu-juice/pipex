@@ -18,53 +18,66 @@ void	close_pipe(int pipe_fd[2])
 	close(pipe_fd[WRITE]);
 }
 
-static int	pipex(int argc, char *argv[], char *envp[])
+static void	finalize(char *here_doc, t_cmd *cmds_list)
 {
-	t_cmd	cmds_list;
-	t_cmd	*cmd;
-	pid_t	pid;
-	int		pipe_fd[2][2];
-	_Bool	is_first_cmd;
-	int		status;
-	int		flag;
+	if (ft_strncmp(here_doc, HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
+		unlink(HERE_DOC_FILE);
+	free_cmds_list(cmds_list);
+}
 
-	flag = 0;
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
-	{
-		if (!here_doc(argv[2]))
-			return (free_cmds_list(&cmds_list), 1);
-		argv[1] = HERE_DOC_FILE;
-	}
-	init_cmds_list(&cmds_list, argc, argv, envp);
-	is_first_cmd = true;
-	cmd = cmds_list.next;
+static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char *envp[], _Bool is_first_cmd)
+{
+	pid_t	pid;
+	int pipe_fd[2][2];
+
 	while (cmd)
 	{
 		if (cmd->next)
 			pipe(pipe_fd[CURR]);
 		pid = fork();
 		if (pid < 0)
-			return (free_cmds_list(&cmds_list), 1);
+			return (1);
 		if (pid == 0)
-			child_process(is_first_cmd, pipe_fd, cmd, argv[1], argv[argc - 1], envp, &cmds_list);
+			child_process(is_first_cmd, pipe_fd, cmd, argv[1], argv[argc - 1], envp, cmds_list);
 		if (!is_first_cmd)
 			close_pipe(pipe_fd[PREV]);
-		if (cmd->next == NULL)
-			close_pipe(pipe_fd[CURR]);
-		else
+		if (cmd->next)
 		{
 			pipe_fd[PREV][READ] = pipe_fd[CURR][READ];
 			pipe_fd[PREV][WRITE] = pipe_fd[CURR][WRITE];
 		}
+		else
+			close_pipe(pipe_fd[CURR]);
 		cmd = cmd->next;
 		is_first_cmd = false;
 	}
+	return (0);
+}
+
+static int	pipex(int argc, char *argv[], char *envp[])
+{
+	t_cmd	cmds_list;
+	t_cmd	*cmd;
+	_Bool	is_first_cmd;
+	int		status;
+	int		ret_val;
+
+	ret_val = 0;
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		if (!here_doc(argv[2]))
+			return (1);
+		argv[1] = HERE_DOC_FILE;
+	}
+	if (!init_cmds_list(&cmds_list, argc, argv, envp))
+		return (finalize(argv[1], &cmds_list), 1);
+	is_first_cmd = true;
+	cmd = cmds_list.next;
+	ret_val = handle_cmd(cmd, &cmds_list, argc, argv, envp, is_first_cmd);
 	while (wait(&status) > 0)
 		if (!WIFEXITED(status))
-			flag = 1;
-	if (ft_strncmp(argv[1], HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
-		unlink(HERE_DOC_FILE);
-	return (free_cmds_list(&cmds_list), flag);
+			ret_val = 1;
+	return (finalize(argv[1], &cmds_list), ret_val);
 }
 
 int	main(int argc, char *argv[], char *envp[])
