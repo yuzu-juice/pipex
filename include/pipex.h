@@ -47,5 +47,6 @@ void	free_cmds_list(t_cmd *cmds_list);
 void	free_string_array(char **str_arr);
 void 	close_pipe(int pipe_fd[2]);
 void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[], t_cmd *cmds_list);
+void	parent_process(int pipe_fd[][2], t_cmd *cmd, _Bool is_first_cmd);
 
 #endif

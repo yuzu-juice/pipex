@@ -35,15 +35,8 @@ static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char
 			return (1);
 		if (pid == 0)
 			child_process(is_first_cmd, pipe_fd, cmd, argv[1], argv[argc - 1], envp, cmds_list);
-		if (!is_first_cmd)
-			close_pipe(pipe_fd[PREV]);
-		if (cmd->next)
-		{
-			pipe_fd[PREV][READ] = pipe_fd[CURR][READ];
-			pipe_fd[PREV][WRITE] = pipe_fd[CURR][WRITE];
-		}
 		else
-			close_pipe(pipe_fd[CURR]);
+			parent_process(pipe_fd, cmd, is_first_cmd);
 		cmd = cmd->next;
 		is_first_cmd = false;
 	}
