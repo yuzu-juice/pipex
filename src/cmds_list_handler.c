@@ -66,6 +66,10 @@ static _Bool	append_cmd(t_cmd *cmds_list, char *str, char *envp[])
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
 	new_cmd->next = NULL;
 	last = get_last_cmd(cmds_list);
+	if (last->index == -1)
+		new_cmd->index = 0;
+	else
+		new_cmd->index = last->index + 1;
 	last->next = new_cmd;
 	return (true);
 }
@@ -95,6 +99,7 @@ _Bool	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
 	cmds_list->cmd = NULL;
 	cmds_list->abs_path = NULL;
 	cmds_list->next = NULL;
+	cmds_list->index = -1;
 	if (!split_cmds(argc, argv, envp, cmds_list))
 		return (false);
 	return (true);

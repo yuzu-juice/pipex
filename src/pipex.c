@@ -23,9 +23,7 @@ static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char
 {
 	pid_t	pid;
 	int		pipe_fd[2][2];
-	_Bool	is_first_cmd;
 
-	is_first_cmd = true;
 	while (cmd)
 	{
 		if (cmd->next)
@@ -34,11 +32,10 @@ static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char
 		if (pid < 0)
 			return (1);
 		if (pid == 0)
-			child_process(is_first_cmd, pipe_fd, cmd, argv[1], argv[argc - 1], envp, cmds_list);
+			child_process(pipe_fd, cmd, argv[1], argv[argc - 1], envp, cmds_list);
 		else
-			parent_process(pipe_fd, cmd, is_first_cmd);
+			parent_process(pipe_fd, cmd);
 		cmd = cmd->next;
-		is_first_cmd = false;
 	}
 	return (0);
 }

@@ -12,9 +12,9 @@
 
 #include "../include/pipex.h"
 
-void	parent_process(int pipe_fd[][2], t_cmd *cmd, _Bool is_first_cmd)
+void	parent_process(int pipe_fd[][2], t_cmd *cmd)
 {
-	if (!is_first_cmd)
+	if (cmd->index != 0)
 		close_pipe(pipe_fd[PREV]);
 	if (cmd->next)
 	{

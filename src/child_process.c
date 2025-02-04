@@ -46,12 +46,12 @@ static void	handle_middle_cmd(int pipe_fd[2][2], int *infile_fd, int *outfile_fd
 	*outfile_fd = pipe_fd[CURR][WRITE];
 }
 
-void	child_process(_Bool is_first_cmd, int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[], t_cmd *cmds_list)
+void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[], t_cmd *cmds_list)
 {
 	int	infile_fd;
 	int	outfile_fd;
 
-	if (is_first_cmd)
+	if (cmd->index == 0)
 		handle_first_cmd(pipe_fd, infile, cmds_list, &infile_fd, &outfile_fd);
 	else if (cmd->next == NULL)
 		handle_last_cmd(pipe_fd, outfile, cmds_list, &infile_fd, &outfile_fd);
