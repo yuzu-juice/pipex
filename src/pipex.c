@@ -19,7 +19,7 @@ static void	finalize(char *here_doc, t_cmd *cmds_list)
 	free_cmds_list(cmds_list);
 }
 
-static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char *envp[])
+static int	handle_cmd(t_cmd *cmd, int argc, char *argv[], char *envp[])
 {
 	pid_t	pid;
 	int		pipe_fd[2][2];
@@ -32,7 +32,7 @@ static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char
 		if (pid < 0)
 			return (1);
 		if (pid == 0)
-			child_process(pipe_fd, cmd, argv[1], argv[argc - 1], envp, cmds_list);
+			child_process(pipe_fd, cmd, argv[1], argv[argc - 1], envp);
 		else
 			parent_process(pipe_fd, cmd);
 		cmd = cmd->next;
@@ -42,7 +42,7 @@ static int	handle_cmd(t_cmd *cmd, t_cmd *cmds_list, int argc, char *argv[], char
 
 static int	pipex(int argc, char *argv[], char *envp[])
 {
-	t_cmd	cmds_list;
+	t_cmd	cmd_head;
 	t_cmd	*cmd;
 	int		status;
 	int		ret_val;
@@ -54,14 +54,14 @@ static int	pipex(int argc, char *argv[], char *envp[])
 			return (1);
 		argv[1] = HERE_DOC_FILE;
 	}
-	if (!init_cmds_list(&cmds_list, argc, argv, envp))
-		return (finalize(argv[1], &cmds_list), 1);
-	cmd = cmds_list.next;
-	ret_val = handle_cmd(cmd, &cmds_list, argc, argv, envp);
+	if (!init_cmds_list(&cmd_head, argc, argv, envp))
+		return (finalize(argv[1], &cmd_head), 1);
+	cmd = cmd_head.next;
+	ret_val = handle_cmd(cmd, argc, argv, envp);
 	while (wait(&status) > 0)
 		if (!WIFEXITED(status))
 			ret_val = 1;
-	return (finalize(argv[1], &cmds_list), ret_val);
+	return (finalize(argv[1], &cmd_head), ret_val);
 }
 
 int	main(int argc, char *argv[], char *envp[])

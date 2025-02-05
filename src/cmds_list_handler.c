@@ -12,13 +12,13 @@
 
 #include "../include/pipex.h"
 
-static t_cmd	*get_last_cmd(t_cmd *cmds_list)
+static t_cmd	*get_last_cmd(t_cmd *cmds)
 {
 	t_cmd	*last;
 
-	if (!cmds_list)
+	if (!cmds)
 		return (NULL);
-	last = cmds_list;
+	last = cmds;
 	while (last->next)
 		last = last->next;
 	return (last);
@@ -48,7 +48,7 @@ static _Bool	remove_quotes(char **tokens)
 	return (true);
 }
 
-static _Bool	append_cmd(t_cmd *cmds_list, char *str, char *envp[])
+static _Bool	append_cmd(t_cmd *cmds, char *str, char *envp[])
 {
 	char	**splited;
 	t_cmd	*new_cmd;
@@ -65,16 +65,17 @@ static _Bool	append_cmd(t_cmd *cmds_list, char *str, char *envp[])
 	new_cmd->cmd = splited;
 	new_cmd->abs_path = get_abs_path(splited[0], envp);
 	new_cmd->next = NULL;
-	last = get_last_cmd(cmds_list);
+	last = get_last_cmd(cmds);
 	if (last->index == -1)
 		new_cmd->index = 0;
 	else
 		new_cmd->index = last->index + 1;
+	new_cmd->head = last->head;
 	last->next = new_cmd;
 	return (true);
 }
 
-static _Bool	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
+static _Bool	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds)
 {
 	size_t	i;
 	size_t	cmd_count;
@@ -87,20 +88,21 @@ static _Bool	split_cmds(int argc, char *argv[], char *envp[], t_cmd *cmds_list)
 	}
 	while (i < cmd_count)
 	{
-		if (!append_cmd(cmds_list, argv[i + 2], envp))
+		if (!append_cmd(cmds, argv[i + 2], envp))
 			return (false);
 		i++;
 	}
 	return (true);
 }
 
-_Bool	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[])
+_Bool	init_cmds_list(t_cmd *cmds, int argc, char *argv[], char *envp[])
 {
-	cmds_list->cmd = NULL;
-	cmds_list->abs_path = NULL;
-	cmds_list->next = NULL;
-	cmds_list->index = -1;
-	if (!split_cmds(argc, argv, envp, cmds_list))
+	cmds->cmd = NULL;
+	cmds->abs_path = NULL;
+	cmds->next = NULL;
+	cmds->index = -1;
+	cmds->head = cmds;
+	if (!split_cmds(argc, argv, envp, cmds))
 		return (false);
 	return (true);
 }

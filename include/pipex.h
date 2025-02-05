@@ -38,7 +38,8 @@ typedef struct s_cmd
 	char			**cmd;
 	char			*abs_path;
 	struct s_cmd	*next;
-}	t_cmd;
+	struct s_cmd 	*head;
+} t_cmd;
 
 char	*get_abs_path(char *command, char *envp[]);
 _Bool	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
@@ -47,7 +48,7 @@ void	print_error(int err, char *name);
 void	free_cmds_list(t_cmd *cmds_list);
 void	free_string_array(char **str_arr);
 void 	close_pipe(int pipe_fd[2]);
-void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[], t_cmd *cmds_list);
+void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[]);
 void	parent_process(int pipe_fd[][2], t_cmd *cmd);
 
 #endif

@@ -46,15 +46,15 @@ static void	handle_middle_cmd(int pipe_fd[2][2], int *infile_fd, int *outfile_fd
 	*outfile_fd = pipe_fd[CURR][WRITE];
 }
 
-void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[], t_cmd *cmds_list)
+void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[])
 {
 	int	infile_fd;
 	int	outfile_fd;
 
 	if (cmd->index == 0)
-		handle_first_cmd(pipe_fd, infile, cmds_list, &infile_fd, &outfile_fd);
+		handle_first_cmd(pipe_fd, infile, cmd->head, &infile_fd, &outfile_fd);
 	else if (cmd->next == NULL)
-		handle_last_cmd(pipe_fd, outfile, cmds_list, &infile_fd, &outfile_fd);
+		handle_last_cmd(pipe_fd, outfile, cmd->head, &infile_fd, &outfile_fd);
 	else
 		handle_middle_cmd(pipe_fd, &infile_fd, &outfile_fd);
 	dup2(infile_fd, STDIN_FILENO);
@@ -71,7 +71,7 @@ void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, c
 	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 	{
-		free_cmds_list(cmds_list);
+		free_cmds_list(cmd->head);
 		exit(EXIT_FAILURE);
 	}
 }
