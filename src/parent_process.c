@@ -12,15 +12,15 @@
 
 #include "../include/pipex.h"
 
-void	parent_process(int pipe_fd[][2], t_cmd *cmd)
+void	parent_process(int pfd[2][2], t_cmd *cmd)
 {
 	if (cmd->index != 0)
-		close_pipe(pipe_fd[PREV]);
+		close_pipe(pfd[PREV]);
 	if (cmd->next)
 	{
-		pipe_fd[PREV][READ] = pipe_fd[CURR][READ];
-		pipe_fd[PREV][WRITE] = pipe_fd[CURR][WRITE];
+		pfd[PREV][READ] = pfd[CURR][READ];
+		pfd[PREV][WRITE] = pfd[CURR][WRITE];
 	}
 	else
-		close_pipe(pipe_fd[CURR]);
+		close_pipe(pfd[CURR]);
 }

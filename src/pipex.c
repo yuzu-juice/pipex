@@ -22,19 +22,19 @@ static void	finalize(char *here_doc, t_cmd *cmds_list)
 static int	handle_cmd(t_cmd *cmd, int argc, char *argv[], char *envp[])
 {
 	pid_t	pid;
-	int		pipe_fd[2][2];
+	int		pfd[2][2];
 
 	while (cmd)
 	{
 		if (cmd->next)
-			pipe(pipe_fd[CURR]);
+			pipe(pfd[CURR]);
 		pid = fork();
 		if (pid < 0)
 			return (1);
 		if (pid == 0)
-			child_process(pipe_fd, cmd, argv[1], argv[argc - 1], envp);
+			child_process(pfd, cmd, (t_files){argv[1], argv[argc - 1]}, envp);
 		else
-			parent_process(pipe_fd, cmd);
+			parent_process(pfd, cmd);
 		cmd = cmd->next;
 	}
 	return (0);

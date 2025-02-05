@@ -12,10 +12,10 @@
 
 #include "../include/pipex.h"
 
-void	close_pipe(int pipe_fd[2])
+void	close_pipe(int pfd[2])
 {
-	close(pipe_fd[READ]);
-	close(pipe_fd[WRITE]);
+	close(pfd[READ]);
+	close(pfd[WRITE]);
 }
 
 static void	free_cmd(t_cmd *cmd)
@@ -58,4 +58,10 @@ void	free_string_array(char **str_arr)
 		i++;
 	}
 	free(str_arr);
+}
+
+void	dup2_and_close(int old_fd, int new_fd)
+{
+	dup2(old_fd, new_fd);
+	close(old_fd);
 }

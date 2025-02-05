@@ -38,8 +38,20 @@ typedef struct s_cmd
 	char			**cmd;
 	char			*abs_path;
 	struct s_cmd	*next;
-	struct s_cmd 	*head;
-} t_cmd;
+	struct s_cmd	*head;
+}	t_cmd;
+
+typedef struct s_files
+{
+	char	*infile;
+	char	*outfile;
+}	t_files;
+
+typedef struct s_file_fds
+{
+	int	*infile_fd;
+	int	*outfile_fd;
+}	t_file_fds;
 
 char	*get_abs_path(char *command, char *envp[]);
 _Bool	init_cmds_list(t_cmd *cmds_list, int argc, char *argv[], char *envp[]);
@@ -47,8 +59,9 @@ _Bool	here_doc(char *limiter);
 void	print_error(int err, char *name);
 void	free_cmds_list(t_cmd *cmds_list);
 void	free_string_array(char **str_arr);
-void 	close_pipe(int pipe_fd[2]);
-void	child_process(int pipe_fd[2][2], t_cmd *cmd, char *infile, char *outfile, char *envp[]);
-void	parent_process(int pipe_fd[][2], t_cmd *cmd);
+void	close_pipe(int pfd[2]);
+void	child_process(int pfd[2][2], t_cmd *cmd, t_files files, char *envp[]);
+void	parent_process(int pfd[2][2], t_cmd *cmd);
+void	dup2_and_close(int old_fd, int new_fd);
 
 #endif
