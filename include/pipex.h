@@ -49,8 +49,8 @@ typedef struct s_files
 
 typedef struct s_file_fds
 {
-	int	*infile_fd;
-	int	*outfile_fd;
+	int	infile_fd;
+	int	outfile_fd;
 }	t_file_fds;
 
 char	*get_abs_path(char *command, char *envp[]);
