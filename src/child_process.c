@@ -19,7 +19,7 @@ static void	first_cmd(int pfd[2][2], char *infile, t_cmd *cmds, t_file_fds *fds)
 	{
 		print_error(ERROR, infile);
 		free_cmds_list(cmds);
-		exit(EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
 	}
 	close(pfd[CURR][READ]);
 	fds->outfile_fd = pfd[CURR][WRITE];
@@ -65,7 +65,7 @@ void	child_process(int pfd[2][2], t_cmd *cmd, t_files files, char *envp[])
 		else
 			print_error(CMD_NOT_FOUND, cmd->cmd[0]);
 		free_cmds_list(cmd->head);
-		exit(EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
 	}
 	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
 	{

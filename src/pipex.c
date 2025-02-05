@@ -30,14 +30,14 @@ static int	handle_cmd(t_cmd *cmd, int argc, char *argv[], char *envp[])
 			pipe(pfd[CURR]);
 		pid = fork();
 		if (pid < 0)
-			return (1);
+			return (EXIT_FAILURE);
 		if (pid == 0)
 			child_process(pfd, cmd, (t_files){argv[1], argv[argc - 1]}, envp);
 		else
 			parent_process(pfd, cmd);
 		cmd = cmd->next;
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 static int	pipex(int argc, char *argv[], char *envp[])
@@ -45,28 +45,31 @@ static int	pipex(int argc, char *argv[], char *envp[])
 	t_cmd	cmd_head;
 	t_cmd	*cmd;
 	int		status;
-	int		ret_val;
+	int		exit_code;
 
-	ret_val = 0;
+	exit_code = EXIT_SUCCESS;
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		if (!here_doc(argv[2]))
-			return (1);
+			return (EXIT_FAILURE);
 		argv[1] = HERE_DOC_FILE;
 	}
 	if (!init_cmds_list(&cmd_head, argc, argv, envp))
 		return (finalize(argv[1], &cmd_head), 1);
 	cmd = cmd_head.next;
-	ret_val = handle_cmd(cmd, argc, argv, envp);
+	exit_code = handle_cmd(cmd, argc, argv, envp);
 	while (wait(&status) > 0)
-		if (!WIFEXITED(status))
-			ret_val = 1;
-	return (finalize(argv[1], &cmd_head), ret_val);
+	{
+		if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS)
+			exit_code = EXIT_FAILURE;
+	}
+	finalize(argv[1], &cmd_head);
+	return (exit_code);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
 	if (argc < 5)
-		return (1);
+		return (EXIT_FAILURE);
 	return (pipex(argc, argv, envp));
 }
