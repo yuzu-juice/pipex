@@ -19,6 +19,8 @@ static void	print_error_1(char *name)
 	unsigned long	err_len;
 	unsigned long	total_len;
 
+	if (!name)
+		return ;
 	name_len = ft_strlen(name);
 	err_len = ft_strlen(strerror(errno));
 	err_msg = ft_calloc(sizeof(char), 10 + name_len + err_len);
@@ -40,6 +42,8 @@ static void	print_error_2(char *name)
 	unsigned long	name_len;
 	unsigned long	total_len;
 
+	if (!name)
+		return ;
 	name_len = ft_strlen(name);
 	err_msg = ft_calloc(sizeof(char), 27 + name_len);
 	total_len = 26 + name_len;
