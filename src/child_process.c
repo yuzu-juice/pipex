@@ -56,8 +56,8 @@ void	child_process(int pfd[2][2], t_cmd *cmd, t_files files, char *envp[])
 		last_cmd(pfd, files.outfile, cmd->head, &file_fds);
 	else
 		middle_cmd(pfd, &file_fds);
-	dup2_and_close(file_fds.infile_fd, STDIN_FILENO);
-	dup2_and_close(file_fds.outfile_fd, STDOUT_FILENO);
+	dup2_and_close(file_fds.infile_fd, STDIN_FILENO, cmd);
+	dup2_and_close(file_fds.outfile_fd, STDOUT_FILENO, cmd);
 	if (cmd->abs_path == NULL)
 	{
 		if (cmd->cmd[0] == NULL)
@@ -67,7 +67,7 @@ void	child_process(int pfd[2][2], t_cmd *cmd, t_files files, char *envp[])
 		free_cmds_list(cmd->head);
 		exit(EXIT_SUCCESS);
 	}
-	if (execve(cmd->abs_path, cmd->cmd, envp) == -1)
+	if (execve(cmd->abs_path, cmd->cmd, envp) < 0)
 	{
 		free_cmds_list(cmd->head);
 		exit(EXIT_FAILURE);

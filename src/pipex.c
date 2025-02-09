@@ -27,7 +27,8 @@ static int	handle_cmd(t_cmd *cmd, int argc, char *argv[], char *envp[])
 	while (cmd)
 	{
 		if (cmd->next)
-			pipe(pfd[CURR]);
+			if (pipe(pfd[CURR]) < 0)
+				return (EXIT_FAILURE);
 		pid = fork();
 		if (pid < 0)
 			return (EXIT_FAILURE);

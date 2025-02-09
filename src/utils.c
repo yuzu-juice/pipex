@@ -60,8 +60,14 @@ void	free_string_array(char **str_arr)
 	free(str_arr);
 }
 
-void	dup2_and_close(int old_fd, int new_fd)
+void	dup2_and_close(int old_fd, int new_fd, t_cmd *cmd)
 {
-	dup2(old_fd, new_fd);
+	if (dup2(old_fd, new_fd) < 0)
+	{
+		close(old_fd);
+		close(new_fd);
+		free_cmds_list(cmd->head);
+		exit(EXIT_FAILURE);
+	}
 	close(old_fd);
 }
