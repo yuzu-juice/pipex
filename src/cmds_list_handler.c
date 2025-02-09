@@ -71,6 +71,7 @@ static _Bool	append_cmd(t_cmd *cmds, char *str, char *envp[])
 	else
 		new_cmd->index = last->index + 1;
 	new_cmd->head = last->head;
+	new_cmd->is_heredoc = last->is_heredoc;
 	last->next = new_cmd;
 	return (true);
 }
@@ -102,6 +103,10 @@ _Bool	init_cmds_list(t_cmd *cmds, int argc, char *argv[], char *envp[])
 	cmds->next = NULL;
 	cmds->index = -1;
 	cmds->head = cmds;
+	if (ft_strncmp(argv[1], HERE_DOC_FILE, ft_strlen(HERE_DOC_FILE)) == 0)
+		cmds->is_heredoc = true;
+	else
+		cmds->is_heredoc = false;
 	if (!split_cmds(argc, argv, envp, cmds))
 		return (false);
 	return (true);

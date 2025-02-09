@@ -177,7 +177,7 @@
     EOF
 
     # bashの実行
-    cat << EOF | grep a | wc -l > outfile2
+    cat << EOF | grep a | wc -l >> outfile2
     Hello World
     This is a test
     abc
@@ -200,7 +200,7 @@
     LIMIT
 
     # bashの実行
-    cat << LIMIT | grep test | sed 's/test/TEST/' > outfile2
+    cat << LIMIT | grep test | sed 's/test/TEST/' >> outfile2
     test1
     test2
     no match

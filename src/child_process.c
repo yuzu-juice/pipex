@@ -29,7 +29,13 @@ static void	last_cmd(int pfd[2][2], char *outfile, t_cmd *cmds, t_file_fds *fds)
 {
 	close(pfd[PREV][WRITE]);
 	fds->infile_fd = pfd[PREV][READ];
-	fds->outfile_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (cmds->is_heredoc)
+	{
+		ft_printf("heredoc");
+		fds->outfile_fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	}
+	else
+		fds->outfile_fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds->outfile_fd < 0)
 	{
 		print_error(ERROR, outfile);

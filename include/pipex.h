@@ -39,6 +39,7 @@ typedef struct s_cmd
 	char			*abs_path;
 	struct s_cmd	*next;
 	struct s_cmd	*head;
+	_Bool			is_heredoc;
 }	t_cmd;
 
 typedef struct s_files
