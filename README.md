@@ -16,7 +16,7 @@
     diff outfile1 outfile2
     ```
 
--   複数コマンド: `cat | grep test | wc -l`
+-   [x] 複数コマンド: `cat | grep test | wc -l`
 
     ```bash
     # テストファイル作成
@@ -30,7 +30,7 @@
     diff outfile1 outfile2
     ```
 
--   複数コマンド: `cat | grep test | wc -l`
+-   [x] 複数コマンド: `cat | grep test | wc -l`
 
     ```bash
     # テストファイル作成
@@ -44,7 +44,7 @@
     diff outfile1 outfile2
     ```
 
--   でっけぇファイル
+-   [x] でっけぇファイル
 
     ```bash
     # テストファイル作成
@@ -58,7 +58,7 @@
 
 ## エラー処理テスト
 
--   存在しないファイル
+-   [x] 存在しないファイル
 
     ```bash
     # 終了コードの確認
@@ -69,7 +69,7 @@
     diff status1 status2
     ```
 
--   空のコマンド
+-   [x] 空のコマンド
 
     ```bash
     # テストファイル作成
@@ -83,7 +83,7 @@
     diff status1 status2
     ```
 
--   無効なコマンド
+-   [x] 無効なコマンド
 
     ```bash
     ./pipex infile "invalidcmd" "wc -l" outfile1
@@ -93,7 +93,7 @@
     diff status1 status2
     ```
 
--   存在しないファイル & 空のコマンド
+-   [x] 存在しないファイル & 空のコマンド
 
     ```bash
     # 終了コードとエラーメッセージの確認
@@ -104,7 +104,7 @@
     diff status1 status2
     ```
 
--   存在しないファイル & 無効なコマンド
+-   [x] 存在しないファイル & 無効なコマンド
 
     ```bash
     # 終了コードとエラーメッセージの確認
@@ -117,7 +117,7 @@
 
 ## 権限テスト
 
--   入力ファイルの読み取り権限なし
+-   [x] 入力ファイルの読み取り権限なし
 
     ```bash
     # テストファイル作成と権限変更
@@ -135,7 +135,7 @@
     chmod 666 noperm_input
     ```
 
--   出力ファイルの書き込み権限なし
+-   [x] 出力ファイルの書き込み権限なし
 
     ```bash
     # テストファイル作成と権限変更
@@ -155,17 +155,17 @@
 
 ## 発展テスト
 
--   絶対パスを使用したコマンド
+-   [x] 絶対パスを使用したコマンド
     ```bash
     # pipex
-    ./pipex infile "/bin/cat" "/usr/bin/wc" outfile
+    ./pipex infile "/bin/cat" "/usr/bin/wc" outfile1
     # bash
-    < infile /bin/cat | /usr/bin/wc > outfile
+    < infile /bin/cat | /usr/bin/wc > outfile2
     ```
 
 ## here_doc テスト
 
--   基本的な here_doc 処理: `grep a | wc -l`
+-   [x] 基本的な here_doc 処理: `grep a | wc -l`
 
     ```bash
     # pipexの実行
@@ -188,7 +188,7 @@
     diff outfile1 outfile2
     ```
 
--   複数行の here_doc: `grep test | sed`
+-   [x] 複数行の here_doc: `grep test | sed`
 
     ```bash
     # pipexの実行
